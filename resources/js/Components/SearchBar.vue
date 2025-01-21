@@ -4,7 +4,7 @@
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        placeholder="Search..." v-model="query" @input="onInput" />
+                        placeholder="Search..." v-model="query" @input="onSearch" />
                 </div>
             </div>
         </div>
@@ -20,7 +20,7 @@ export default {
     },
     
     methods: {
-        onInput() {
+        onSearch() {
             if (this.query.length >= 3) {
                 this.searchMovies(this.query);
             }
@@ -37,9 +37,11 @@ export default {
                     }
                 );
                 const data = await response.json();
-                console.log(data.results); // Vous pouvez afficher les résultats ou les traiter ici
+                this.$emit("results-updated", data.results); // Émettre les résultats au parent
+                //console.log(data.results);
             } catch (error) {
                 console.error('Erreur lors de la recherche de films :', error);
+                this.$emit("results-updated", []); // Émettre un tableau vide en cas d'erreur
             }
         },
     },
