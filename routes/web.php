@@ -24,4 +24,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/movie/{id}', function ($id) {
+    return Inertia::render('MovieDetails', ['id' => $id]);
+})->name('movie.details');
+
+Route::get('/tv/{id}', function ($id) {
+    return Inertia::render('TVDetails', ['id' => $id]);
+})->name('tv.details');
+
 require __DIR__.'/auth.php';

@@ -27,18 +27,30 @@ export default {
         },
         async searchMovies(query) {
             try {
-                const response = await fetch(
-                    `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`,
-                    {
+                // Effectuer les requêtes pour les films et les séries en parallèle
+                const [moviesResponse, tvResponse] = await Promise.all([
+                    fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`, {
                         headers: {
-                            accept: 'application/json',
+                            accept: "application/json",
                             Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
                         },
-                    }
-                );
-                const data = await response.json();
-                this.$emit("results-updated", data.results); // Émettre les résultats au parent
-                //console.log(data.results);
+                    }),
+                    fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(query)}`, {
+                        headers: {
+                            accept: "application/json",
+                            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+                        },
+                    }),
+                ]);
+
+                // Attendre les réponses JSON
+                const moviesData = await moviesResponse.json();
+                const tvData = await tvResponse.json();
+
+                this.$emit('results-updated', {
+                    movies: moviesData.results || [],
+                    tvShows: tvData.results || [],
+                });
             } catch (error) {
                 console.error('Erreur lors de la recherche de films :', error);
                 this.$emit("results-updated", []); // Émettre un tableau vide en cas d'erreur

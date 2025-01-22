@@ -1,7 +1,7 @@
 <script setup>
 import SearchBar from '@/Components/SearchBar.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 </script>
 
 <template>
@@ -21,23 +21,45 @@ import { Head } from '@inertiajs/vue3';
                     <div class="p-6 text-gray-900">
                         <SearchBar @results-updated="updateResults" />
                     </div>
-                    <!-- Résultats -->
-                    <div v-if="results && results.length > 0" class="mt-4">
-                        <h2 class="text-lg font-bold">Search Results:</h2>
-                        <ul>
-                            <li v-for="(movie, index) in results" :key="index" class="py-2 border-b">
-                                <div class="flex items-center">
+
+                    <!-- Affichage des films -->
+                    <div v-if="movies && movies.length > 0" class="mt-4">
+                        <h2 class="text-lg font-bold mb-4">Movies:</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <div v-for="(movie, index) in movies" :key="index"
+                                class="border border-gray-300 rounded-md shadow-sm overflow-hidden">
+                                <Link :href="route('movie.details', {id: movie.id})">
                                     <img :src="`https://image.tmdb.org/t/p/w200${movie.poster_path}`" alt="Movie Poster"
-                                        class="w-16 h-24 object-cover mr-4" />
-                                    <div>
-                                        <h3 class="font-semibold">{{ movie.title }}</h3>
-                                        <p class="text-sm text-gray-600">
-                                            Release Date: {{ movie.release_date || 'N/A' }}
-                                        </p>
-                                    </div>
+                                        class="w-full h-auto" />
+                                </Link>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-center">{{ movie.title }}</h3>
+                                    <p class="text-sm text-gray-600 text-center">
+                                        Release Date: {{ movie.release_date || 'N/A' }}
+                                    </p>
                                 </div>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Affichage des séries -->
+                    <div v-if="tvShows && tvShows.length > 0" class="mt-8">
+                        <h2 class="text-lg font-bold mb-4">TV Shows:</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <div v-for="(tvShow, index) in tvShows" :key="index"
+                                class="border border-gray-300 rounded-md shadow-sm overflow-hidden">
+                                <Link :href="route('tv.details', {id: tvShow.id})">
+                                    <img :src="`https://image.tmdb.org/t/p/w200${tvShow.poster_path}`"
+                                        alt="TV Show Poster" class="w-full h-auto" />
+                                </Link>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-center">{{ tvShow.name }}</h3>
+                                    <p class="text-sm text-gray-600 text-center">
+                                        First Air Date: {{ tvShow.first_air_date || 'N/A' }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,12 +75,14 @@ export default {
     },
     data() {
         return {
-            results: [], // Initialisation de la liste des résultats
+            movies: [],
+            tvShows: [],
         };
     },
     methods: {
-        updateResults(newResults) {
-            this.results = newResults; // Mise à jour des résultats avec ceux de SearchBar
+        updateResults({ movies, tvShows }) {
+            this.movies = movies;
+            this.tvShows = tvShows;
         },
     },
 };
