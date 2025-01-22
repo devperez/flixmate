@@ -1,8 +1,9 @@
 <template>
     <div>
-        <h1>TV Show Details</h1>
-        <p>TV Show ID: {{ id }}</p>
-        <!-- Appel à l'API de TMDB pour afficher les détails de la série -->
+        <h1>{{ tv.name }}</h1>
+        <img :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`" alt="TV Poster" />
+        <p>{{ tv.overview }}</p>
+        <p><strong>First Air Date:</strong> {{ tv.first_air_date }}</p>
     </div>
 </template>
 
@@ -10,6 +11,34 @@
 export default {
     props: {
         id: String,
+    },
+    data() {
+        return {
+            tv: null,
+        };
+    },
+    async created() {
+        await this.fetchTvDetails();
+    },
+    methods: {
+        async fetchTvDetails() {
+            try {
+                const response = await fetch(
+                    `https://api.themoviedb.org/3/tv/${this.id}`,
+                    {
+                        headers: {
+                            accept: 'application/json',
+                            Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+                        },
+                    }
+                );
+                const data = await response.json();
+                console.log(data);
+                this.tv = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des détails de la série :', error);
+            }
+        },
     },
 };
 </script>
