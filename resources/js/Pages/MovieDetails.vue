@@ -1,13 +1,30 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+</script>
+
 <template>
-    <div>
-        <h1>{{ movie.title }}</h1>
-        <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie Poster" />
-        <p>{{ movie.overview }}</p>
-        <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
-    </div>
+
+    <Head title="Dashboard" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                Movie details
+            </h2>
+        </template>
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <h1>{{ movie.title }}</h1>
+                <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie Poster" />
+                <p>{{ movie.overview }}</p>
+                <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+            </div>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script>
+
 export default {
     props: {
         id: String,

@@ -1,10 +1,26 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+</script>
+
 <template>
-    <div>
-        <h1>{{ tv.name }}</h1>
-        <img :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`" alt="TV Poster" />
-        <p>{{ tv.overview }}</p>
-        <p><strong>First Air Date:</strong> {{ tv.first_air_date }}</p>
-    </div>
+
+    <Head title="Dashboard" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                Tv show Details
+            </h2>
+        </template>
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <h1>{{ tv.name }}</h1>
+                <img :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`" alt="TV Poster" />
+                <p>{{ tv.overview }}</p>
+                <p><strong>First Air Date:</strong> {{ tv.first_air_date }}</p>
+            </div>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script>
