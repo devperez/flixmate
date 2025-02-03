@@ -1,5 +1,6 @@
 <script setup>
 import SearchBar from '@/Components/SearchBar.vue';
+import UserList from '@/Components/UserList.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 </script>
@@ -14,6 +15,12 @@ import { Head, Link } from '@inertiajs/vue3';
                 Dashboard
             </h2>
         </template>
+
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <UserList />
+            </div>
+        </div>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">

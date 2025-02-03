@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ListController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +33,6 @@ Route::get('/tv/{id}', function ($id) {
     return Inertia::render('TVDetails', ['id' => $id]);
 })->name('tv.details');
 
+Route::get('/lists', [ListController::class, 'index'])->name('lists.index');
+Route::post('/lists', [ListController::class, 'store'])->name('lists.store');
 require __DIR__.'/auth.php';
