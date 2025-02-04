@@ -26,6 +26,7 @@ const fetchLists = async () => {
     try {
         const response = await axios.get(route('lists.index'));
         lists.value = response.data;
+        console.log(lists.value)
     } catch (error) {
         console.error('Erreur lors de la récupération des listes :', error);
     }

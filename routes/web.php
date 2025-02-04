@@ -35,4 +35,5 @@ Route::get('/tv/{id}', function ($id) {
 
 Route::get('/lists', [ListController::class, 'index'])->name('lists.index');
 Route::post('/lists', [ListController::class, 'store'])->name('lists.store');
+Route::post('/lists', [ListController::class, 'addMovie'])->name('lists.add_movie');
 require __DIR__.'/auth.php';
