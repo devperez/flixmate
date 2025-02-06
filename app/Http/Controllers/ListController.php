@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Movie;
 use App\Models\MovieList;
 use Illuminate\Http\Request;
@@ -14,14 +15,12 @@ class ListController extends Controller
     public function index()
     {
         // Récupérer les listes de l'utilisateur authentifié
-        $lists = MovieList::where('owner_id', Auth::id())->get();
-        // Récupérer les items de la liste pour afficher un poster
-        foreach($lists as $list)
-        {
-            $listItem = MovieListItem::where('list_id', $list->id)->first();
-            $movie = Movie::where('id', $listItem->movie_id)->get();
-        }
-        dd($movie);
+        $lists = MovieList::where('owner_id', Auth::id())->with(['items' => function ($query) {
+            $query->with('movie');
+        }])
+        ->get();
+        
+        //dd($lists);
         return response()->json($lists);
     }
 
@@ -61,5 +60,20 @@ class ListController extends Controller
         $listItem->added_by = Auth::id();
         $listItem->save();
         return response()->json($listItem);
+    }
+
+    public function show($id)
+    {
+        $list = MovieList::with('items.movie')->where('owner_id', Auth::id())->findOrFail($id);
+        // $list = MovieList::with('items.movie') // Charge les items et leurs films associés
+        // ->where('owner_id', Auth::id()) 
+        // ->find($id);
+        if (!$list) {
+            return redirect()->route('lists.index')->with('error', 'Liste introuvable');
+        }
+       // dd($list);
+        return Inertia::render('Show', [
+            'list' => $list
+        ]);
     }
 }

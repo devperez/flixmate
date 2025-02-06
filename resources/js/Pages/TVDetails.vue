@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 // Récupérer l'ID depuis les props
