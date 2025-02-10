@@ -6,7 +6,7 @@
 
                 <ul v-if="lists.length > 0">
                     <li v-for="list in lists" :key="list.id" class="border-b py-4 text-center">
-                        <h2 class="text-lg font-semibold mb-2">{{ list.name }}</h2>
+                        <h2 class="text-lg font-semibold mb-2">{{ list.name }} ({{ list.items.length }})</h2>
 
                         <div v-if="list.items.length > 0 && list.items[0].movie && list.items[0].movie.poster_path" class="flex justify-center">
                             <Link :href="`/lists/${list.id}`">
