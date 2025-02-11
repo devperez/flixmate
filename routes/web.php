@@ -45,4 +45,6 @@ Route::get('/lists/{id}', [ListController::class, 'show'])->name('lists.show');
 
 Route::get('/contacts/search', [ContactController::class, 'searchEmail'])->name('contacts.search');
 Route::post('/contacts/add', [ContactController::class, 'addContact'])->name('contacts.add');
+Route::get('/contacts/pending', [ContactController::class, 'getPendingRequestsCount'])->name('contacts.pending');
+Route::get('/contacts/connections', [ContactController::class, 'getConnections'])->name('contacts.connections');
 require __DIR__ . '/auth.php';

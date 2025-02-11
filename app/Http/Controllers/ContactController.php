@@ -20,7 +20,6 @@ class ContactController extends Controller
     {
         $user = Auth::user();
         $contactId = $request->input('id');
-        //dd($contactId);
         $contact = User::find($contactId);
         $connection = new UserConnection();
         $connection->user_id = $user->id;
@@ -29,5 +28,34 @@ class ContactController extends Controller
         $connection->save();
         
         return response()->json($contact);
+    }
+
+    public function getPendingRequestsCount()
+    {
+        $user = Auth::user();
+        $count = UserConnection::where('connected_user_id', $user->id)
+            ->where('status', 'pending')
+            ->count();
+        return response()->json($count);
+    }
+
+    public function getConnections()
+    {
+        $userId = Auth::id();
+        $pendingConnections = UserConnection::where('connected_user_id', $userId)
+            ->where('status', 'pending')
+            ->with('user')
+            ->get();
+        $activeConnections = UserConnection::where(function($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('connected_user_id', $userId);
+        })
+        ->where('status', 'accepted')
+        ->with(['user', 'connectedUser'])
+        ->get();
+        return response()->json([
+            'pendingConnections' => $pendingConnections,
+            'activeConnections' => $activeConnections,
+        ]);
     }
 }

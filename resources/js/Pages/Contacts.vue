@@ -28,6 +28,41 @@
                 </div>
             </div>
         </div>
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold">Demandes en attente</h3>
+                    <div v-if="pendingConnections.length > 0">
+                        <div v-for="connection in pendingConnections" :key="connection.id" class="border p-4 mb-2">
+                            <p><strong>Nom:</strong> {{ connection.user.name }}</p>
+                            <p><strong>Email:</strong> {{ connection.user.email }}</p>
+                            <button @click="acceptConnection(connection.id)" class="px-4 py-2 bg-green-500 text-white rounded">
+                                Accepter
+                            </button>
+                            <button @click="rejectConnection(connection.id)" class="px-4 py-2 bg-red-500 text-white rounded ml-2">
+                                Rejeter
+                            </button>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p>Aucune demande en attente.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold">Connexions en cours</h3>
+                    <div v-if="activeConnections.length > 0">
+                        <div v-for="connection in activeConnections" :key="connection.id" class="border p-4 mb-2">
+                            <p><strong>Nom:</strong> {{ connection.connected_user_id === user.id ? connection.user.name : connection.connectedUser.name }}</p>
+                            <p><strong>Email:</strong> {{ connection.connected_user_id === user.id ? connection.user.email : connection.connectedUser.email }}</p>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p>Aucune connexion en cours.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </AuthenticatedLayout>
 
 </template>
@@ -42,6 +77,19 @@ import { debounce } from 'lodash';
 
 const searchQuery = ref('');
 const user = ref(null);
+const pendingConnections = ref([]);
+const activeConnections = ref([]);
+
+const fetchConnections = async () => {
+    try {
+        const response = await axios.get(route('contacts.connections'));
+        pendingConnections.value = response.data.pendingConnections;
+        activeConnections.value = response.data.activeConnections;
+        user.value = response.data.user;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des connexions:', error);
+    }
+};
 
 const searchEmails = debounce(async () => {
     if (searchQuery.value.length < 3) {
