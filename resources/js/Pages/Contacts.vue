@@ -83,9 +83,13 @@ const activeConnections = ref([]);
 const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
+        console.log('Réponse des connexions:', response.data); // Ajoutez ce log
+
         pendingConnections.value = response.data.pendingConnections;
         activeConnections.value = response.data.activeConnections;
         user.value = response.data.user;
+        console.log('Utilisateur connecté:', user.value); // Ajoutez ce log
+
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
@@ -134,8 +138,8 @@ const rejectConnection = async (connectionId) => {
     }
 };
 
-console.log(user);
 const getConnectedUserName = (connection) => {
+    console.log(user.value);
     return connection.user_id === user.value?.id ? connection.connected_user.name : connection.user.name;
 };
 

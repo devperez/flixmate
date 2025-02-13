@@ -53,9 +53,13 @@ class ContactController extends Controller
             ->where('status', 'accepted')
             ->with(['user', 'connectedUser'])
             ->get();
+        
+        $user = User::find($userId);
+        
         return response()->json([
             'pendingConnections' => $pendingConnections,
             'activeConnections' => $activeConnections,
+            'user' => $user
         ]);
     }
 
