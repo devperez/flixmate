@@ -43,8 +43,11 @@ Route::post('/lists', [ListController::class, 'store'])->name('lists.store');
 Route::post('/lists/add-movie', [ListController::class, 'addMovie'])->name('lists.add_movie');
 Route::get('/lists/{id}', [ListController::class, 'show'])->name('lists.show');
 
+// Handling contact requests
 Route::get('/contacts/search', [ContactController::class, 'searchEmail'])->name('contacts.search');
 Route::post('/contacts/add', [ContactController::class, 'addContact'])->name('contacts.add');
 Route::get('/contacts/pending', [ContactController::class, 'getPendingRequestsCount'])->name('contacts.pending');
 Route::get('/contacts/connections', [ContactController::class, 'getConnections'])->name('contacts.connections');
+Route::post('/accept-connection', [ContactController::class, 'acceptConnection'])->name('contacts.accept');
+Route::post('/reject-connection', [ContactController::class, 'rejectConnection'])->name('contacts.reject');
 require __DIR__ . '/auth.php';

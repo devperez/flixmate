@@ -50,11 +50,11 @@
                 </div>
 
                 <div>
-                    <h3 class="text-lg font-semibold">Connexions en cours</h3>
+                    <h3 class="text-lg font-semibold">Contacts</h3>
                     <div v-if="activeConnections.length > 0">
                         <div v-for="connection in activeConnections" :key="connection.id" class="border p-4 mb-2">
-                            <p><strong>Nom:</strong> {{ connection.connected_user_id === user.id ? connection.user.name : connection.connectedUser.name }}</p>
-                            <p><strong>Email:</strong> {{ connection.connected_user_id === user.id ? connection.user.email : connection.connectedUser.email }}</p>
+                            <p><strong>Nom:</strong> {{ getConnectedUserName(connection) }}</p>
+                            <p><strong>Email:</strong> {{ getConnectedUserEmail(connection) }}</p>
                         </div>
                     </div>
                     <div v-else>
@@ -114,8 +114,37 @@ const addToContacts = async () => {
     } catch (error) {
         console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
     }
-}
+};
+
+const acceptConnection = async (connectionId) => {
+    try {
+        await axios.post(route('contacts.accept', { id: connectionId }));
+        fetchConnections();
+    } catch (error) {
+        console.error('Erreur lors de l\'acceptation de la connexion:', error);
+    }
+};
+
+const rejectConnection = async (connectionId) => {
+    try {
+        await axios.post(route('contacts.reject', { id: connectionId }));
+        fetchConnections();
+    } catch (error) {
+        console.error('Erreur lors du rejet de la connexion:', error);
+    }
+};
+
+console.log(user);
+const getConnectedUserName = (connection) => {
+    return connection.user_id === user.value?.id ? connection.connected_user.name : connection.user.name;
+};
+
+const getConnectedUserEmail = (connection) => {
+    return connection.user_id === user.value?.id ? connection.connected_user.email : connection.user.email;
+};
+
 onMounted(() => {
     searchEmails();
+    fetchConnections();
 });
 </script>

@@ -26,7 +26,7 @@ class ContactController extends Controller
         $connection->connected_user_id = $contact->id;
         $connection->status = 'pending';
         $connection->save();
-        
+
         return response()->json($contact);
     }
 
@@ -46,16 +46,39 @@ class ContactController extends Controller
             ->where('status', 'pending')
             ->with('user')
             ->get();
-        $activeConnections = UserConnection::where(function($query) use ($userId) {
+        $activeConnections = UserConnection::where(function ($query) use ($userId) {
             $query->where('user_id', $userId)
                 ->orWhere('connected_user_id', $userId);
         })
-        ->where('status', 'accepted')
-        ->with(['user', 'connectedUser'])
-        ->get();
+            ->where('status', 'accepted')
+            ->with(['user', 'connectedUser'])
+            ->get();
         return response()->json([
             'pendingConnections' => $pendingConnections,
             'activeConnections' => $activeConnections,
         ]);
+    }
+
+    public function acceptConnection(Request $request)
+    {
+        $connectionId = $request->input('id');
+        $connection = UserConnection::find($connectionId);
+        if ($connection) {
+            $connection->status = 'accepted';
+            $connection->save();
+        }
+        
+        return response()->json(['message' => 'Connexion acceptée']);
+    }
+
+    public function rejectConnection(Request $request)
+    {
+        $connectionId = $request->input('id');
+        $connection = UserConnection::find($connectionId);
+        if ($connection) {
+            $connection->status = 'rejected';
+            $connection->save();
+        }
+        return response()->json(['message' => 'Connexion rejetée']);
     }
 }
