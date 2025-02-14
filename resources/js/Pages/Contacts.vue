@@ -14,13 +14,12 @@
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <!-- Afficher les résultats ici -->
-                    <div v-if="user" class="border p-4">
-                        <p><strong>Nom:</strong> {{ user.name }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
+                    <div v-if="searchedUser" class="border p-4">
+                        <p><strong>Nom:</strong> {{ searchedUser.name }}</p>
+                        <p><strong>Email:</strong> {{ searchedUser.email }}</p>
                         <button @click="addToContacts" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
                             Ajouter à mes contacts
                         </button>
-
                     </div>
                     <div v-else>
                         <p>Aucun utilisateur trouvé.</p>
@@ -28,18 +27,21 @@
                 </div>
             </div>
         </div>
+
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="mb-4">
                     <h3 class="text-lg font-semibold">Demandes en attente</h3>
                     <div v-if="pendingConnections.length > 0">
                         <div v-for="connection in pendingConnections" :key="connection.id" class="border p-4 mb-2">
-                            <p><strong>Nom:</strong> {{ connection.user.name }}</p>
-                            <p><strong>Email:</strong> {{ connection.user.email }}</p>
-                            <button @click="acceptConnection(connection.id)" class="px-4 py-2 bg-green-500 text-white rounded">
+                            <p><strong>Nom:</strong> {{ getConnectedUserName(connection) }}</p>
+                            <p><strong>Email:</strong> {{ getConnectedUserEmail(connection) }}</p>
+                            <button @click="acceptConnection(connection.id)"
+                                class="px-4 py-2 bg-green-500 text-white rounded">
                                 Accepter
                             </button>
-                            <button @click="rejectConnection(connection.id)" class="px-4 py-2 bg-red-500 text-white rounded ml-2">
+                            <button @click="rejectConnection(connection.id)"
+                                class="px-4 py-2 bg-red-500 text-white rounded ml-2">
                                 Rejeter
                             </button>
                         </div>
@@ -64,10 +66,7 @@
             </div>
         </div>
     </AuthenticatedLayout>
-
 </template>
-
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -77,19 +76,18 @@ import { debounce } from 'lodash';
 
 const searchQuery = ref('');
 const user = ref(null);
+const searchedUser = ref(null);
 const pendingConnections = ref([]);
 const activeConnections = ref([]);
 
 const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
-        console.log('Réponse des connexions:', response.data); // Ajoutez ce log
-
+        console.log('Réponse des connexions:', response.data);
         pendingConnections.value = response.data.pendingConnections;
         activeConnections.value = response.data.activeConnections;
         user.value = response.data.user;
-        console.log('Utilisateur connecté:', user.value); // Ajoutez ce log
-
+        console.log('Utilisateur connecté:', user.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
@@ -97,7 +95,7 @@ const fetchConnections = async () => {
 
 const searchEmails = debounce(async () => {
     if (searchQuery.value.length < 3) {
-        user.value = null;
+        searchedUser.value = null;
         return;
     }
 
@@ -105,18 +103,21 @@ const searchEmails = debounce(async () => {
         const response = await axios.get(route('contacts.search'), {
             params: { query: searchQuery.value }
         });
-        user.value = response.data;
+        console.log('Résultats de la recherche:', response.data);
+        searchedUser.value = response.data;
     } catch (error) {
         console.error('Erreur lors de la recherche des emails:', error);
     }
 }, 300);
 
 const addToContacts = async () => {
-    try {
-        await axios.post(route('contacts.add', { id: user.value.id }));
-        alert('Utilisateur ajouté à vos contacts!');
-    } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
+    if (searchedUser.value && searchedUser.value.id) {
+        try {
+            await axios.post(route('contacts.add', { id: searchedUser.value.id }));
+            alert('Utilisateur ajouté à vos contacts!');
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
+        }
     }
 };
 
@@ -139,7 +140,6 @@ const rejectConnection = async (connectionId) => {
 };
 
 const getConnectedUserName = (connection) => {
-    console.log(user.value);
     return connection.user_id === user.value?.id ? connection.connected_user.name : connection.user.name;
 };
 

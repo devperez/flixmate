@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\ListShare;
+use App\Models\MovieList;
+use Illuminate\Http\Request;
 use App\Models\UserConnection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -53,9 +55,9 @@ class ContactController extends Controller
             ->where('status', 'accepted')
             ->with(['user', 'connectedUser'])
             ->get();
-        
+
         $user = User::find($userId);
-        
+
         return response()->json([
             'pendingConnections' => $pendingConnections,
             'activeConnections' => $activeConnections,
@@ -71,7 +73,7 @@ class ContactController extends Controller
             $connection->status = 'accepted';
             $connection->save();
         }
-        
+
         return response()->json(['message' => 'Connexion acceptée']);
     }
 
@@ -84,5 +86,28 @@ class ContactController extends Controller
             $connection->save();
         }
         return response()->json(['message' => 'Connexion rejetée']);
+    }
+
+    public function shareList(Request $request)
+    {
+        $listId = $request->listId;
+        $contactIds = $request->contacts;
+
+        // Valider les données reçues
+        $request->validate([
+            'listId' => 'required|exists:movie_lists,id',
+            'contacts' => 'required|array',
+            'contacts.*' => 'exists:users,id',
+        ]);
+
+        // Insérer les enregistrements de partage
+        foreach ($contactIds as $contactId) {
+            ListShare::create([
+                'list_id' => $listId,
+                'contact_id' => $contactId,
+            ]);
+        }
+
+        return response()->json(['message' => 'Liste partagée']);
     }
 }

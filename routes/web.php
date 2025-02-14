@@ -50,4 +50,5 @@ Route::get('/contacts/pending', [ContactController::class, 'getPendingRequestsCo
 Route::get('/contacts/connections', [ContactController::class, 'getConnections'])->name('contacts.connections');
 Route::post('/accept-connection', [ContactController::class, 'acceptConnection'])->name('contacts.accept');
 Route::post('/reject-connection', [ContactController::class, 'rejectConnection'])->name('contacts.reject');
+Route::post('/share-list', [ContactController::class, 'shareList'])->name('share-list');
 require __DIR__ . '/auth.php';

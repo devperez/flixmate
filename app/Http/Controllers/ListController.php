@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ListShare;
 use Inertia\Inertia;
 use App\Models\Movie;
 use App\Models\MovieList;
@@ -21,6 +22,11 @@ class ListController extends Controller
         ->get();
         
         //dd($lists);
+        $sharedLists = ListShare::where('contact_id', Auth::id())->with(['items' => function ($query) {
+            $query->with('movie');
+        }])
+        ->get();
+        
         return response()->json($lists);
     }
 
