@@ -83,11 +83,11 @@ const activeConnections = ref([]);
 const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
-        console.log('Réponse des connexions:', response.data);
+        //console.log('Réponse des connexions:', response.data);
         pendingConnections.value = response.data.pendingConnections;
         activeConnections.value = response.data.activeConnections;
         user.value = response.data.user;
-        console.log('Utilisateur connecté:', user.value);
+        //console.log('Utilisateur connecté:', user.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
@@ -103,7 +103,7 @@ const searchEmails = debounce(async () => {
         const response = await axios.get(route('contacts.search'), {
             params: { query: searchQuery.value }
         });
-        console.log('Résultats de la recherche:', response.data);
+        //console.log('Résultats de la recherche:', response.data);
         searchedUser.value = response.data;
     } catch (error) {
         console.error('Erreur lors de la recherche des emails:', error);

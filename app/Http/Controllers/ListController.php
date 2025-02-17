@@ -9,7 +9,6 @@ use App\Models\MovieList;
 use Illuminate\Http\Request;
 use App\Models\MovieListItem;
 use Illuminate\Support\Facades\Auth;
-use League\CommonMark\Extension\CommonMark\Node\Block\ListItem;
 
 class ListController extends Controller
 {
@@ -19,15 +18,18 @@ class ListController extends Controller
         $lists = MovieList::where('owner_id', Auth::id())->with(['items' => function ($query) {
             $query->with('movie');
         }])
-        ->get();
-        
-        //dd($lists);
-        $sharedLists = ListShare::where('contact_id', Auth::id())->with(['items' => function ($query) {
-            $query->with('movie');
+            ->get();
+
+        // Récupérer les listes partagées avec l'utilisateur authentifié
+        $sharedLists = ListShare::where('contact_id', Auth::id())->with(['list' => function ($query) {
+            $query->with('items.movie');
         }])
-        ->get();
-        
-        return response()->json($lists);
+            ->get();
+
+        return response()->json([
+            'lists' => $lists,
+            'sharedLists' => $sharedLists
+        ]);
     }
 
     public function store(Request $request)
@@ -70,16 +72,24 @@ class ListController extends Controller
 
     public function show($id)
     {
-        $list = MovieList::with('items.movie')->where('owner_id', Auth::id())->findOrFail($id);
-        // $list = MovieList::with('items.movie') // Charge les items et leurs films associés
-        // ->where('owner_id', Auth::id()) 
-        // ->find($id);
-        if (!$list) {
-            return redirect()->route('lists.index')->with('error', 'Liste introuvable');
+        // Vérifier si l'utilisateur est le propriétaire de la liste
+        $list = MovieList::with('items.movie')->find($id);
+
+        if ($list && $list->owner_id === Auth::id()) {
+            // L'utilisateur est le propriétaire, renvoyer la liste
+            return Inertia::render('Show', ['list' => $list]);
         }
-       // dd($list);
-        return Inertia::render('Show', [
-            'list' => $list
-        ]);
+
+        // Vérifier si l'utilisateur a accès à la liste via un partage
+        $sharedList = ListShare::where('list_id', $id)->where('contact_id', Auth::id())->first();
+
+        if ($sharedList) {
+            // L'utilisateur a accès à la liste via un partage, charger la liste associée
+            $list = MovieList::with('items.movie')->find($id);
+            return Inertia::render('Show', ['list' => $list]);
+        }
+
+        // Si l'utilisateur n'a pas accès à la liste, rediriger avec un message d'erreur
+        return redirect()->route('lists.index')->with('error', 'Liste introuvable');
     }
 }
