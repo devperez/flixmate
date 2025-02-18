@@ -35,7 +35,7 @@ const fetchTvDetails = async () => {
 const fetchLists = async () => {
     try {
         const response = await axios.get(route('lists.index'));
-        lists.value = response.data.map(list => ({
+        lists.value = response.data.lists.map(list => ({
             ...list,
             showContacts: false,
             selectedContacts: []
@@ -50,7 +50,7 @@ const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
         activeConnections.value = response.data.activeConnections.map(connection => connection.connected_user);
-        console.log('Contacts actifs:', activeConnections.value); // Ajoutez ce log
+        //console.log('Contacts actifs:', activeConnections.value); // Ajoutez ce log
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
