@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import ShareListModal from '@/Components/ShareListModal.vue';
 
 // Récupérer l'ID depuis les props
 const props = defineProps(['id']);
@@ -11,6 +12,8 @@ const listName = ref('');
 const lists = ref([]);
 const tv = ref(null);
 const activeConnections = ref([]);
+const selectedListId = ref(null);
+const showShareModal = ref(false);
 
 // Récupérer les détails de la série TV depuis TMDb
 const fetchTvDetails = async () => {
@@ -95,11 +98,19 @@ const addToList = async (listId) => {
     }
 };
 
-// Fonction pour basculer l'affichage des contacts
-const toggleShare = (index) => {
-    lists.value[index].showContacts = !lists.value[index].showContacts;
+const openShareModal = (index) => {
+    selectedListId.value = lists.value[index].id;
+    showShareModal.value = true;
 };
 
+const closeShareModal = () => {
+    showShareModal.value = false;
+    selectedListId.value = null;
+};
+
+const handleListShared = () => {
+    fetchLists();
+};
 // Fonction pour partager la liste
 const shareList = async (index) => {
     const list = lists.value[index];
@@ -141,7 +152,8 @@ onMounted(() => {
                 <!-- Première colonne : Détails de la série -->
                 <div v-if="tv">
                     <h1>{{ tv.name }}</h1>
-                    <img v-if="tv.poster_path" :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`" alt="TV Poster" />
+                    <img v-if="tv.poster_path" :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`"
+                        alt="TV Poster" />
                     <p>{{ tv.overview }}</p>
                     <p><strong>Première diffusion:</strong> {{ tv.first_air_date }}</p>
                     <p><strong>Nombre de saisons:</strong> {{ tv.number_of_seasons }}</p>
@@ -167,22 +179,9 @@ onMounted(() => {
                                         class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                                         ➕ Ajouter
                                     </button>
-                                    <button @click="toggleShare(index)"
+                                    <button @click="openShareModal(index)"
                                         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                         Partager la liste
-                                    </button>
-                                </div>
-                                <!-- Afficher les contacts si le partage est activé -->
-                                <div v-if="list.showContacts" class="mt-4">
-                                    <h4>Partager avec :</h4>
-                                    <ul>
-                                        <li v-for="contact in activeConnections" :key="contact.id" class="flex items-center">
-                                            <input type="checkbox" :id="'contact-' + contact.id" :value="contact.id" v-model="list.selectedContacts">
-                                            <label :for="'contact-' + contact.id" class="ml-2">{{ contact.name }}</label>
-                                        </li>
-                                    </ul>
-                                    <button @click="shareList(index)" class="mt-4 px-4 py-2 bg-green-500 text-white rounded">
-                                        Confirmer
                                     </button>
                                 </div>
                             </li>
@@ -191,5 +190,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <!-- Utilisation du composant ShareListModal -->
+        <ShareListModal v-if="showShareModal" :listId="selectedListId" :activeConnections="activeConnections"
+            @close="closeShareModal" @shared="handleListShared" />
     </AuthenticatedLayout>
 </template>
