@@ -8,11 +8,13 @@
                 List details
             </h2>
         </template>
-        <button @click="openShareModal(index)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Partager la liste
-        </button>
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div class="flex justify-end">
+                    <button @click="openShareModal(index)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        Partager la liste
+                    </button>
+                </div>
                 <div v-if="list">
                     <h1 class="text-2xl font-bold mb-4">{{ list.name }}</h1>
                     <div v-if="list.items && list.items.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
