@@ -34,7 +34,7 @@
             </div>
         </div>
         <!-- Utilisation du composant ShareListModal -->
-        <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections"
+        <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
             @close="closeShareModal" @shared="handleListShared" />
     </AuthenticatedLayout>
 </template>
@@ -43,15 +43,20 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import ShareListModal from '@/Components/ShareListModal.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 const showShareModal = ref(false);
 const activeConnections = ref([]);
+const sharedContacts = ref([]);
 const props = defineProps({
     list: {
         Object,
         required: true
     }
+});
+
+const sharedContactIds = computed(() => {
+    return sharedContacts.value.map(contact => contact.id);
 });
 
 const openShareModal = () => {
@@ -64,25 +69,7 @@ const closeShareModal = () => {
 
 const handleListShared = () => {
     alert('Liste partagée avec succès!');
-};
-
-// Fonction pour partager la liste
-const shareList = async (index) => {
-    if (list.selectedContacts.length > 0) {
-        try {
-            await axios.post(route('share-list'), {
-                listId: props.list.id, // Utilisez l'ID réel de la liste
-                contacts: list.selectedContacts,
-            });
-            alert('Liste partagée avec succès!');
-            //list.showContacts = false; // Masquer les contacts après le partage
-            closeShareModal();
-        } catch (error) {
-            console.error('Erreur lors du partage de la liste:', error);
-        }
-    } else {
-        alert('Veuillez sélectionner au moins un contact.');
-    }
+    fetchSharedContacts();
 };
 
 // Récupérer les connexions actives de l'utilisateur
@@ -90,16 +77,25 @@ const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
         activeConnections.value = response.data.activeConnections.map(connection => connection.connected_user);
-        //console.log('Contacts actifs:', activeConnections.value); // Ajoutez ce log
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
 };
 
+// Fonction pour récupérer les contacts avec lesquels la liste est déjà partagée
+const fetchSharedContacts = async () => {
+    try {
+        const response = await axios.get(route('lists.sharedContacts', { listId: props.list.id }));
+        sharedContacts.value = response.data.sharedContacts;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des contacts partagés:', error);
+    }
+};
+
 // Charger les données au montage du composant
 onMounted(() => {
-    //fetchLists();
     fetchConnections();
+    fetchSharedContacts();
 });
 
 </script>

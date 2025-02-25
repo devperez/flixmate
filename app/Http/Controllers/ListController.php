@@ -92,4 +92,13 @@ class ListController extends Controller
         // Si l'utilisateur n'a pas accès à la liste, rediriger avec un message d'erreur
         return redirect()->route('lists.index')->with('error', 'Liste introuvable');
     }
+
+    public function sharedWithContacts(Request $request)
+    {
+        $listId = $request->query('listId');
+        // On récupère les partages de cette liste en bdd
+        $shares = ListShare::where('list_id',$listId)->with('sharedWith')->get();
+        $sharedContacts = $shares->pluck('sharedWith')->toArray();
+        return response()->json(['sharedContacts' => $sharedContacts]);
+    }
 }

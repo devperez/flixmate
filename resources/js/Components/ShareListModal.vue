@@ -4,8 +4,11 @@
             <h4 class="text-lg font-semibold mb-4">Partager la liste avec :</h4>
             <ul>
                 <li v-for="contact in activeConnections" :key="contact.id" class="flex items-center mb-2">
-                    <input type="checkbox" :id="'contact-' + contact.id" :value="contact.id" v-model="selectedContacts">
-                    <label :for="'contact-' + contact.id" class="ml-2">{{ contact.name }}</label>
+                    <input type="checkbox" :id="'contact-' + contact.id" :value="contact.id" v-model="selectedContacts" :disabled="isSharedWithContact(contact.id)">
+                    <label :for="'contact-' + contact.id" class="ml-2" :class="{'text-gray-400': isSharedWithContact(contact.id)}">{{ contact.name }}
+                        <span v-if="isSharedWithContact(contact.id)">(Déjà partagé)</span>
+
+                    </label>
                 </li>
             </ul>
             <button @click="confirmShare" class="mt-4 px-4 py-2 bg-green-500 text-white rounded">
@@ -25,12 +28,17 @@ import axios from 'axios';
 const props = defineProps({
     listId: Number,
     activeConnections: Array,
+    sharedContacts: Array, // Contacts avec lesquels la liste est déjà partagée
 });
 
 const emits = defineEmits(['close', 'shared']);
 
 const showModal = ref(true);
 const selectedContacts = ref([]);
+
+const isSharedWithContact = (contactId) => {
+    return props.sharedContacts.includes(contactId);
+};
 
 const confirmShare = async () => {
     if (selectedContacts.value.length > 0) {
@@ -54,3 +62,4 @@ const closeModal = () => {
     emits('close');
 };
 </script>
+

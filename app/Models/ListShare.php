@@ -20,4 +20,9 @@ class ListShare extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function sharedWith()
+    {
+        return $this->belongsTo(User::class, 'contact_id');
+    }
 }
