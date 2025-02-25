@@ -53,16 +53,26 @@
 
                 <div>
                     <h3 class="text-lg font-semibold">Contacts</h3>
-                    <div v-if="activeConnections.length > 0">
-                        <div v-for="connection in activeConnections" :key="connection.id" class="border p-4 mb-2">
-                            <p><strong>Nom:</strong> {{ getConnectedUserName(connection) }}</p>
-                            <p><strong>Email:</strong> {{ getConnectedUserEmail(connection) }}</p>
+                    <div v-if="activeConnections.length > 0"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div v-for="connection in activeConnections" :key="connection.id"
+                            class="border rounded-lg shadow-md p-4 mb-2">
+                            <div class="flex items-center">
+                                <div class="ml-4">
+                                    <p class="text-lg font-semibold"><strong>Nom:</strong> {{
+                                        getConnectedUserName(connection)
+                                        }}</p>
+                                    <p class="text-gray-600"><strong>Email:</strong> {{
+                                        getConnectedUserEmail(connection) }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div v-else>
                         <p>Aucune connexion en cours.</p>
                     </div>
                 </div>
+
             </div>
         </div>
     </AuthenticatedLayout>
