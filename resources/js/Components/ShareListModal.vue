@@ -3,11 +3,17 @@
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <h4 class="text-lg font-semibold mb-4">Partager la liste avec :</h4>
             <ul>
-                <li v-for="contact in activeConnections" :key="contact.id" class="flex items-center mb-2">
+                <!-- <li v-for="contact in activeConnections" :key="contact.id" class="flex items-center mb-2">
                     <input type="checkbox" :id="'contact-' + contact.id" :value="contact.id" v-model="selectedContacts" :disabled="isSharedWithContact(contact.id)">
                     <label :for="'contact-' + contact.id" class="ml-2" :class="{'text-gray-400': isSharedWithContact(contact.id)}">{{ contact.name }}
                         <span v-if="isSharedWithContact(contact.id)">(Déjà partagé)</span>
-
+                    </label>
+                </li> -->
+                <li v-for="contact in filteredConnections" :key="contact.id" class="flex items-center mb-2">
+                    <input type="checkbox" :id="'contact-' + contact.id" :value="contact.id" v-model="selectedContacts" :disabled="isSharedWithContact(contact.id)">
+                    <label :for="'contact-' + contact.id" class="ml-2" :class="{'text-gray-400': isSharedWithContact(contact.id)}">
+                        {{ contact.name }}
+                        <span v-if="isSharedWithContact(contact.id)">(Déjà partagé)</span>
                     </label>
                 </li>
             </ul>
@@ -22,13 +28,15 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
     listId: Number,
     activeConnections: Array,
     sharedContacts: Array, // Contacts avec lesquels la liste est déjà partagée
+    ownerId: Number,
+    currentUserId: Number,
 });
 
 const emits = defineEmits(['close', 'shared']);
@@ -39,6 +47,12 @@ const selectedContacts = ref([]);
 const isSharedWithContact = (contactId) => {
     return props.sharedContacts.includes(contactId);
 };
+
+const filteredConnections = computed(() => {
+    return props.activeConnections.filter(connection =>
+        connection.id !== props.ownerId && connection.id !== props.currentUserId
+    );
+});
 
 const confirmShare = async () => {
     if (selectedContacts.value.length > 0) {
