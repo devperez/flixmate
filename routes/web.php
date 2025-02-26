@@ -16,6 +16,10 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('current-user', function () {
+    return response()->json(['id' => Auth::id()]);
+})->name('current-user');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

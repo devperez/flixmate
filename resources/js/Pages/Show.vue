@@ -11,7 +11,7 @@
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="flex justify-end">
-                    <button @click="openShareModal(index)"
+                    <button v-if="isOwner" @click="openShareModal(index)"
                         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Partager la liste
                     </button>
@@ -34,8 +34,11 @@
             </div>
         </div>
         <!-- Utilisation du composant ShareListModal -->
+        <!-- <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
+            @close="closeShareModal" @shared="handleListShared" /> -->
+            <!-- Utilisation du composant ShareListModal -->
         <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
-            @close="closeShareModal" @shared="handleListShared" />
+            :ownerId="list?.owner_id" :currentUserId="currentUserId" @close="closeShareModal" @shared="handleListShared" />
     </AuthenticatedLayout>
 </template>
 
@@ -48,11 +51,16 @@ import { ref, onMounted, computed } from 'vue';
 const showShareModal = ref(false);
 const activeConnections = ref([]);
 const sharedContacts = ref([]);
+const currentUserId = ref(null);
 const props = defineProps({
     list: {
         Object,
         required: true
     }
+});
+
+const isOwner = computed(() => {
+    return props.list.owner_id === currentUserId.value;
 });
 
 const sharedContactIds = computed(() => {
@@ -92,10 +100,21 @@ const fetchSharedContacts = async () => {
     }
 };
 
+// Fonction pour récupérer l'ID de l'utilisateur actuel
+const fetchCurrentUserId = async () => {
+    try {
+        const response = await axios.get(route('current-user'));
+        currentUserId.value = response.data.id;
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'ID de l\'utilisateur actuel:', error);
+    }
+};
+
 // Charger les données au montage du composant
 onMounted(() => {
     fetchConnections();
     fetchSharedContacts();
+    fetchCurrentUserId();
 });
 
 </script>
