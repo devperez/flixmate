@@ -49,14 +49,13 @@ class ContactController extends Controller
             ->with('user')
             ->get();
         $activeConnections = UserConnection::where(function ($query) use ($userId) {
-            $query->where('user_id', $userId)
-                ->orWhere('connected_user_id', $userId);
+            $query->where('user_id', $userId);
         })
             ->where('status', 'accepted')
             ->with(['user', 'connectedUser'])
             ->get();
 
-        $user = User::find($userId);
+            $user = User::find($userId);
 
         return response()->json([
             'pendingConnections' => $pendingConnections,
@@ -73,6 +72,11 @@ class ContactController extends Controller
             $connection->status = 'accepted';
             $connection->save();
         }
+        $newConnection = new UserConnection();
+        $newConnection->user_id = $connection->connected_user_id;
+        $newConnection->connected_user_id = $connection->user_id;
+        $newConnection->status = 'accepted';
+        $newConnection->save();
 
         return response()->json(['message' => 'Connexion acceptée']);
     }
