@@ -150,8 +150,8 @@ onMounted(() => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Première colonne : Détails de la série -->
-                <div v-if="tv">
-                    <h1>{{ tv.name }}</h1>
+                <div v-if="tv" class="text-gray-900 p-6 bg-white rounded-lg shadow">
+                    <h1 class="text-lg font-semibold">{{ tv.name }}</h1>
                     <img v-if="tv.poster_path" :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`"
                         alt="TV Poster" />
                     <p>{{ tv.overview }}</p>
@@ -173,16 +173,18 @@ onMounted(() => {
                         <h3 class="text-lg font-semibold mb-2">Mes listes</h3>
                         <ul>
                             <li v-for="(list, index) in lists" :key="index" class="flex flex-col border-b py-2">
-                                <div class="flex justify-between items-center">
-                                    <span>{{ list.name }}</span>
-                                    <button @click="addToList(list.id)"
-                                        class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                                        ➕ Ajouter
-                                    </button>
-                                    <button @click="openShareModal(index)"
-                                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                <div class="flex items-center justify-between">
+                                    <span class="flex-1">{{ list.name }}</span>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="addToList(list.id)"
+                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                            ➕ Ajouter
+                                        </button>
+                                        <button @click="openShareModal(index)"
+                                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                                         Partager la liste
                                     </button>
+                                </div>
                                 </div>
                             </li>
                         </ul>
