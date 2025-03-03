@@ -47,7 +47,6 @@ const fetchLists = async () => {
         console.error('Erreur lors de la récupération des listes:', error);
     }
 };
-
 // Récupérer les connexions actives de l'utilisateur
 const fetchConnections = async () => {
     try {
@@ -65,12 +64,12 @@ const createList = async () => {
         alert('Veuillez entrer un nom de liste');
         return;
     }
-
+    
     try {
         const response = await axios.post(route('lists.store'), {
             name: listName.value
         });
-
+        
         lists.value.push({
             ...response.data,
             showContacts: false,
@@ -92,6 +91,7 @@ const addToList = async (listId) => {
             poster: tv.value.poster_path,
             release: tv.value.first_air_date,
         });
+        fetchLists();
         alert(`"${tv.value.name}" ajouté à la liste !`);
     } catch (error) {
         console.error('Erreur lors de l\'ajout à la liste:', error);
@@ -130,6 +130,20 @@ const shareList = async (index) => {
     }
 };
 
+const isInList = (items) => {
+    return items.some(item => item.movie?.tmdb_id === tv.value?.id);
+};
+
+const removeFromList = (listId) => {
+    try {
+        axios.delete(route('delete-movie', {list: listId, movie: tv.value.id}));
+        alert(`"${tv.value.name}" supprimé de la liste !`);
+        fetchLists();
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la série de la liste:', error);
+    }
+};
+
 // Charger les données au montage du composant
 onMounted(() => {
     fetchTvDetails();
@@ -142,9 +156,7 @@ onMounted(() => {
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Tv show Details
-            </h2>
+            <h2>TV Show Details</h2>
         </template>
 
         <div class="py-12">
@@ -176,15 +188,19 @@ onMounted(() => {
                                 <div class="flex items-center justify-between">
                                     <span class="flex-1">{{ list.name }}</span>
                                     <div class="flex items-center space-x-2">
+                                        <button v-if="isInList(list.items)" @click="removeFromList(list.id)"
+                                            class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">
+                                            🗑 Supprimer
+                                        </button>
                                         <button @click="addToList(list.id)"
                                             class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
                                             ➕ Ajouter
                                         </button>
                                         <button @click="openShareModal(index)"
-                                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                        Partager la liste
-                                    </button>
-                                </div>
+                                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                            Partager la liste
+                                        </button>
+                                    </div>
                                 </div>
                             </li>
                         </ul>

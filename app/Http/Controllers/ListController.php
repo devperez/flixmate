@@ -50,23 +50,36 @@ class ListController extends Controller
 
     public function addMovie(Request $request)
     {
-        // On ajoute l'item à la table movies
-        $movie = new Movie();
-        $movie->title = $request->name;
-        $movie->release_date = $request->release;
-        $movie->poster_path = $request->poster;
-        $movie->director = null;
-        $movie->actors = null;
-        $movie->tmdb_id = $request->tv_id;
-        $movie->save();
-        $tvId = $request->tv_id;
-        $listId = $request->query('list');
-        // Ajouter cette nouvelle entrée à la liste
-        $listItem = new MovieListItem();
-        $listItem->list_id = $listId;
-        $listItem->movie_id = $movie->id;
-        $listItem->added_by = Auth::id();
-        $listItem->save();
+        // On ajoute l'item à la table movies s'il n'existe pas déjà
+        if (!Movie::where('tmdb_id', $request->tv_id)->exists()) {
+            $movie = new Movie();
+            $movie->title = $request->name;
+            $movie->release_date = $request->release;
+            $movie->poster_path = $request->poster;
+            $movie->director = null;
+            $movie->actors = null;
+            $movie->tmdb_id = $request->tv_id;
+            $movie->save();
+        
+            $tvId = $request->tv_id;
+            $listId = $request->query('list');
+            // Ajouter cette nouvelle entrée à la liste
+            $listItem = new MovieListItem();
+            $listItem->list_id = $listId;
+            $listItem->movie_id = $movie->id;
+            $listItem->added_by = Auth::id();
+            $listItem->save();
+        }else{
+            $movie = Movie::where('tmdb_id', $request->tv_id)->first();
+            $tvId = $request->tv_id;
+            $listId = $request->query('list');
+            // Ajouter cette nouvelle entrée à la liste
+            $listItem = new MovieListItem();
+            $listItem->list_id = $listId;
+            $listItem->movie_id = $movie->id;
+            $listItem->added_by = Auth::id();
+            $listItem->save();
+        }
         return response()->json($listItem);
     }
 
@@ -100,5 +113,16 @@ class ListController extends Controller
         $shares = ListShare::where('list_id',$listId)->with('sharedWith')->get();
         $sharedContacts = $shares->pluck('sharedWith')->toArray();
         return response()->json(['sharedContacts' => $sharedContacts]);
+    }
+
+    public function delete(Request $request)
+    {
+        $listId = $request->query('list');
+        $movieId = $request->query('movie');
+        $movie = Movie::where('tmdb_id',$movieId)->first();
+       // dd($movie);
+        $listItem = MovieListItem::where('list_id', $listId)->where('movie_id', $movie->id)->first();
+        $listItem->delete();
+        return response()->json(['message' => 'Movie deleted']);
     }
 }

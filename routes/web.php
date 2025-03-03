@@ -48,6 +48,7 @@ Route::post('/lists', [ListController::class, 'store'])->name('lists.store');
 Route::post('/lists/add-movie', [ListController::class, 'addMovie'])->name('lists.add_movie');
 Route::get('/lists/{id}', [ListController::class, 'show'])->name('lists.show');
 Route::get('/list/shared-contact', [ListController::class, 'sharedWithContacts'])->name('lists.sharedContacts');
+Route::delete('/delete-movie', [ListController::class, 'delete'])->name('delete-movie');
 
 // Handling contact requests
 Route::get('/contacts/search', [ContactController::class, 'searchEmail'])->name('contacts.search');
