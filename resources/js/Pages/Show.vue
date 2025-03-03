@@ -22,21 +22,20 @@
                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div v-for="item in list.items" :key="item.id"
                             class="border rounded-lg shadow-md p-4 text-center">
-                            <img v-if="item.movie" :src="'https://image.tmdb.org/t/p/w500' + item.movie.poster_path"
+                            <Link :href="route('tv.details', { id: item.movie.tmdb_id })">
+                                <img v-if="item.movie" :src="'https://image.tmdb.org/t/p/w500' + item.movie.poster_path"
                                 alt="Affiche du film" class="w-full h-auto rounded-lg shadow mb-4">
                             <p class="text-lg font-semibold">{{ item.movie?.title }}</p>
+                            </Link>
                         </div>
                     </div>
-                    <p v-else class="text-gray-500">Cette liste ne contient aucun film.</p>
+                    <p v-else class="text-gray-500">Cette liste est vide.</p>
                 </div>
 
                 <p v-else class="text-red-500">Chargement de la liste...</p>
             </div>
         </div>
         <!-- Utilisation du composant ShareListModal -->
-        <!-- <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
-            @close="closeShareModal" @shared="handleListShared" /> -->
-            <!-- Utilisation du composant ShareListModal -->
         <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
             :ownerId="list?.owner_id" :currentUserId="currentUserId" @close="closeShareModal" @shared="handleListShared" />
     </AuthenticatedLayout>
@@ -44,7 +43,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import ShareListModal from '@/Components/ShareListModal.vue';
 import { ref, onMounted, computed } from 'vue';
 
