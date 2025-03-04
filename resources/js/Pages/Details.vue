@@ -5,7 +5,7 @@ import axios from 'axios';
 import ShareListModal from '@/Components/ShareListModal.vue';
 
 // Récupérer l'ID depuis les props
-const props = defineProps(['id']);
+const props = defineProps(['id', 'type']);
 
 // Références réactives
 const listName = ref('');
@@ -14,6 +14,7 @@ const tv = ref(null);
 const activeConnections = ref([]);
 const selectedListId = ref(null);
 const showShareModal = ref(false);
+const movie = ref(null);
 
 // Récupérer les détails de la série TV depuis TMDb
 const fetchTvDetails = async () => {
@@ -31,6 +32,25 @@ const fetchTvDetails = async () => {
         tv.value = data;
     } catch (error) {
         console.error('Erreur lors de la récupération des détails de la série :', error);
+    }
+};
+
+//Récupérer les détails du film depuis TMDb
+const fetchMovieDetails = async () => {
+    try {
+        const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${props.id}`,
+            {
+                headers: {
+                    accept: 'application/json',
+                    Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+                },
+            }
+        );
+        const data = await response.json();
+        movie.value = data;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des détails du film :', error);
     }
 };
 
@@ -52,7 +72,6 @@ const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
         activeConnections.value = response.data.activeConnections.map(connection => connection.connected_user);
-        //console.log('Contacts actifs:', activeConnections.value); // Ajoutez ce log
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
     }
@@ -83,19 +102,35 @@ const createList = async () => {
 
 // Fonction pour ajouter une série à une liste
 const addToList = async (listId) => {
-    if (!tv.value) return;
-    try {
-        await axios.post(route('lists.add_movie', { list: listId }), {
-            tv_id: tv.value.id, // On envoie l'id de la série
-            name: tv.value.name, // On récupère le nom
-            poster: tv.value.poster_path,
-            release: tv.value.first_air_date,
-        });
-        fetchLists();
-        alert(`"${tv.value.name}" ajouté à la liste !`);
-    } catch (error) {
-        console.error('Erreur lors de l\'ajout à la liste:', error);
-    }
+    //console.log(movie.value);
+    if (tv.value){
+        try {
+            await axios.post(route('lists.add_movie', { list: listId }), {
+                tv_id: tv.value.id, // On envoie l'id de la série
+                name: tv.value.name, // On récupère le nom
+                poster: tv.value.poster_path,
+                release: tv.value.first_air_date,
+            });
+            fetchLists();
+            alert(`"${tv.value.name}" ajouté à la liste !`);
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout à la liste:', error);
+        }
+    } if (movie.value) {
+        console.log(movie.value);
+        try {
+            await axios.post(route('lists.add_movie', { list: listId }), {
+                movie_id: movie.value.id,
+                title: movie.value.title,
+                poster: movie.value.poster_path,
+                release: movie.value.release_date,
+            });
+            fetchLists();
+            alert(`"${movie.value.title}" ajouté à la liste !`);
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout à la liste:', error);
+        }
+    };
 };
 
 const openShareModal = (index) => {
@@ -131,12 +166,13 @@ const shareList = async (index) => {
 };
 
 const isInList = (items) => {
-    return items.some(item => item.movie?.tmdb_id === tv.value?.id);
+    return items.some(item => item.movie?.tmdb_id === tv.value?.id ||item.movie?.tmdb_id === movie.value?.id);
 };
 
 const removeFromList = (listId) => {
+    console.log(movie.value.id);
     try {
-        axios.delete(route('delete-movie', {list: listId, movie: tv.value.id}));
+        axios.delete(route('delete-movie', {list: listId, movie: tv.value.id ? tv.value.id : movie.value.id}));
         alert(`"${tv.value.name}" supprimé de la liste !`);
         fetchLists();
     } catch (error) {
@@ -146,7 +182,11 @@ const removeFromList = (listId) => {
 
 // Charger les données au montage du composant
 onMounted(() => {
-    fetchTvDetails();
+    if (props.type === 'tv') {
+        fetchTvDetails();
+    } else {
+        fetchMovieDetails();
+    }
     fetchLists();
     fetchConnections();
 });
@@ -169,6 +209,14 @@ onMounted(() => {
                     <p>{{ tv.overview }}</p>
                     <p><strong>Première diffusion:</strong> {{ tv.first_air_date }}</p>
                     <p><strong>Nombre de saisons:</strong> {{ tv.number_of_seasons }}</p>
+                </div>
+                <!-- Première colonne : Détails du film -->
+                <div v-if="movie" class="text-gray-900 p-6 bg-white rounded-lg shadow">
+                    <h1 class="text-lg font-semibold">{{ movie.title }}</h1>
+                    <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
+                        alt="Movie Poster" />
+                    <p>{{ movie.overview }}</p>
+                    <p><strong>Sortie:</strong> {{ movie.release_date }}</p>
                 </div>
 
                 <!-- Deuxième colonne : Gestion des listes -->

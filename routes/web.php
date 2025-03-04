@@ -35,12 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/movie/{id}', function ($id) {
-    return Inertia::render('MovieDetails', ['id' => $id]);
-})->name('movie.details');
-
-Route::get('/tv/{id}', function ($id) {
-    return Inertia::render('TVDetails', ['id' => $id]);
+Route::get('/tv/{id}/{type?}', function ($id, $type) {
+    return Inertia::render('Details', ['id' => $id, 'type' => $type]);
 })->name('tv.details');
 
 Route::get('/lists', [ListController::class, 'index'])->name('lists.index');

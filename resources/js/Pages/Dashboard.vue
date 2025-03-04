@@ -31,7 +31,7 @@ import { Head, Link } from '@inertiajs/vue3';
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 <div v-for="(movie, index) in movies" :key="index"
                                     class="border border-gray-300 rounded-md shadow-sm overflow-hidden">
-                                    <Link :href="route('movie.details', { id: movie.id })">
+                                    <Link :href="route('tv.details', { id: movie.id, type: 'movie' })">
                                     <img :src="`https://image.tmdb.org/t/p/w200${movie.poster_path}`" alt="Movie Poster"
                                         class="w-full h-auto" />
                                     </Link>
@@ -51,7 +51,7 @@ import { Head, Link } from '@inertiajs/vue3';
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 <div v-for="(tvShow, index) in tvShows" :key="index"
                                     class="border border-gray-300 rounded-md shadow-sm overflow-hidden">
-                                    <Link :href="route('tv.details', { id: tvShow.id })">
+                                    <Link :href="route('tv.details', { id: tvShow.id, type: 'tv' })">
                                     <img :src="`https://image.tmdb.org/t/p/w200${tvShow.poster_path}`"
                                         alt="TV Show Poster" class="w-full h-auto" />
                                     </Link>

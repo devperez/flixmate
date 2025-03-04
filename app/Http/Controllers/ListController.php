@@ -51,17 +51,16 @@ class ListController extends Controller
     public function addMovie(Request $request)
     {
         // On ajoute l'item à la table movies s'il n'existe pas déjà
-        if (!Movie::where('tmdb_id', $request->tv_id)->exists()) {
+        if (!Movie::where('tmdb_id', $request->tv_id)->exists() ? !Movie::where('tmdb_id', $request->tv_id) : !Movie::where('tmdb_id', $request->movie_id)->exists()) {
             $movie = new Movie();
-            $movie->title = $request->name;
+            $movie->tmdb_id = $request->tv_id ? $request->tv_id : $request->movie_id;
+            $movie->title = $request->name ? $request->name : $request->title;
             $movie->release_date = $request->release;
             $movie->poster_path = $request->poster;
             $movie->director = null;
             $movie->actors = null;
-            $movie->tmdb_id = $request->tv_id;
             $movie->save();
         
-            $tvId = $request->tv_id;
             $listId = $request->query('list');
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();
@@ -70,8 +69,7 @@ class ListController extends Controller
             $listItem->added_by = Auth::id();
             $listItem->save();
         }else{
-            $movie = Movie::where('tmdb_id', $request->tv_id)->first();
-            $tvId = $request->tv_id;
+            $movie = Movie::where('tmdb_id', $request->tv_id)->first() ? Movie::where('tmdb_id', $request->tv_id) : Movie::where('tmdb_id', $request->movie_id)->first();
             $listId = $request->query('list');
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();
