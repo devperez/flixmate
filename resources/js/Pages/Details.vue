@@ -15,7 +15,8 @@ const activeConnections = ref([]);
 const selectedListId = ref(null);
 const showShareModal = ref(false);
 const movie = ref(null);
-console.log(props.type);
+
+//console.log(props.type);
 // Récupérer les détails de la série TV depuis TMDb
 const fetchTvDetails = async () => {
     try {
@@ -30,7 +31,7 @@ const fetchTvDetails = async () => {
         );
         const data = await response.json();
         tv.value = data;
-        console.log(tv.value);
+        //console.log(tv.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des détails de la série :', error);
     }
@@ -49,7 +50,7 @@ const fetchMovieDetails = async () => {
         );
         const data = await response.json();
         movie.value = data;
-        console.log(movie.value);
+        //console.log(movie.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des détails du film :', error);
     }
@@ -169,9 +170,14 @@ const shareList = async (index) => {
 };
 
 const isInList = (items) => {
+    if (!Array.isArray(items)) {
+        return false;
+    }
+
     if (!tv.value && !movie.value) {
         return false;
     }
+    
     return items.some(item => item.movie?.tmdb_id === tv.value?.id ||item.movie?.tmdb_id === movie.value?.id);
 };
 
