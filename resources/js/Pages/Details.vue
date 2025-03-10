@@ -15,7 +15,7 @@ const activeConnections = ref([]);
 const selectedListId = ref(null);
 const showShareModal = ref(false);
 const movie = ref(null);
-
+console.log(props.type);
 // Récupérer les détails de la série TV depuis TMDb
 const fetchTvDetails = async () => {
     try {
@@ -30,11 +30,11 @@ const fetchTvDetails = async () => {
         );
         const data = await response.json();
         tv.value = data;
+        console.log(tv.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des détails de la série :', error);
     }
 };
-
 //Récupérer les détails du film depuis TMDb
 const fetchMovieDetails = async () => {
     try {
@@ -49,6 +49,7 @@ const fetchMovieDetails = async () => {
         );
         const data = await response.json();
         movie.value = data;
+        console.log(movie.value);
     } catch (error) {
         console.error('Erreur lors de la récupération des détails du film :', error);
     }
@@ -110,6 +111,7 @@ const addToList = async (listId) => {
                 name: tv.value.name, // On récupère le nom
                 poster: tv.value.poster_path,
                 release: tv.value.first_air_date,
+                metadata: 'tv',
             });
             fetchLists();
             alert(`"${tv.value.name}" ajouté à la liste !`);
@@ -124,6 +126,7 @@ const addToList = async (listId) => {
                 title: movie.value.title,
                 poster: movie.value.poster_path,
                 release: movie.value.release_date,
+                metadata: 'movie',
             });
             fetchLists();
             alert(`"${movie.value.title}" ajouté à la liste !`);
@@ -166,6 +169,9 @@ const shareList = async (index) => {
 };
 
 const isInList = (items) => {
+    if (!tv.value && !movie.value) {
+        return false;
+    }
     return items.some(item => item.movie?.tmdb_id === tv.value?.id ||item.movie?.tmdb_id === movie.value?.id);
 };
 

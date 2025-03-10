@@ -50,8 +50,10 @@ class ListController extends Controller
 
     public function addMovie(Request $request)
     {
+        $tvIdExists = Movie::where('tmdb_id', $request->tv_id)->exists();
+        $movieIdExists = Movie::where('tmdb_id', $request->movie_id)->exists();
         // On ajoute l'item à la table movies s'il n'existe pas déjà
-        if (!Movie::where('tmdb_id', $request->tv_id)->exists() ? !Movie::where('tmdb_id', $request->tv_id) : !Movie::where('tmdb_id', $request->movie_id)->exists()) {
+        if (!$tvIdExists && !$movieIdExists) {
             $movie = new Movie();
             $movie->tmdb_id = $request->tv_id ? $request->tv_id : $request->movie_id;
             $movie->title = $request->name ? $request->name : $request->title;
@@ -59,8 +61,9 @@ class ListController extends Controller
             $movie->poster_path = $request->poster;
             $movie->director = null;
             $movie->actors = null;
+            $movie->metadata = $request->metadata;
             $movie->save();
-        
+            
             $listId = $request->query('list');
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();

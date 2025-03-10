@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/tv/{id}/{type?}', function ($id, $type) {
+Route::get('/tv/{id}/{type?}', function ($id, $type = null) {
     return Inertia::render('Details', ['id' => $id, 'type' => $type]);
 })->name('tv.details');
 
