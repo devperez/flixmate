@@ -120,7 +120,7 @@ const addToList = async (listId) => {
             console.error('Erreur lors de l\'ajout à la liste:', error);
         }
     } if (movie.value) {
-        console.log(movie.value);
+        //console.log(movie.value);
         try {
             await axios.post(route('lists.add_movie', { list: listId }), {
                 movie_id: movie.value.id,
@@ -177,7 +177,7 @@ const isInList = (items) => {
     if (!tv.value && !movie.value) {
         return false;
     }
-    
+
     return items.some(item => item.movie?.tmdb_id === tv.value?.id ||item.movie?.tmdb_id === movie.value?.id);
 };
 

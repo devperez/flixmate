@@ -72,7 +72,7 @@ class ListController extends Controller
             $listItem->added_by = Auth::id();
             $listItem->save();
         }else{
-            $movie = Movie::where('tmdb_id', $request->tv_id)->first() ? Movie::where('tmdb_id', $request->tv_id) : Movie::where('tmdb_id', $request->movie_id)->first();
+            $movie = Movie::where('tmdb_id', $request->tv_id)->first() ?: Movie::where('tmdb_id', $request->movie_id)->first();
             $listId = $request->query('list');
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();
