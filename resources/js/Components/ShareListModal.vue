@@ -39,6 +39,10 @@ const showModal = ref(true);
 const selectedContacts = ref([]);
 
 const isSharedWithContact = (contactId) => {
+    if (!props.sharedContacts) {
+        return false;
+    }
+    
     return props.sharedContacts.includes(contactId);
 };
 
