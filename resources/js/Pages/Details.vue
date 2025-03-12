@@ -85,12 +85,12 @@ const createList = async () => {
         alert('Veuillez entrer un nom de liste');
         return;
     }
-    
+
     try {
         const response = await axios.post(route('lists.store'), {
             name: listName.value
         });
-        
+
         lists.value.push({
             ...response.data,
             showContacts: false,
@@ -105,7 +105,7 @@ const createList = async () => {
 // Fonction pour ajouter une série à une liste
 const addToList = async (listId) => {
     //console.log(movie.value);
-    if (tv.value){
+    if (tv.value) {
         try {
             await axios.post(route('lists.add_movie', { list: listId }), {
                 tv_id: tv.value.id, // On envoie l'id de la série
@@ -178,13 +178,13 @@ const isInList = (items) => {
         return false;
     }
 
-    return items.some(item => item.movie?.tmdb_id === tv.value?.id ||item.movie?.tmdb_id === movie.value?.id);
+    return items.some(item => item.movie?.tmdb_id === tv.value?.id || item.movie?.tmdb_id === movie.value?.id);
 };
 
 const removeFromList = (listId) => {
     console.log(movie.value.id);
     try {
-        axios.delete(route('delete-movie', {list: listId, movie: tv.value.id ? tv.value.id : movie.value.id}));
+        axios.delete(route('delete-movie', { list: listId, movie: tv.value.id ? tv.value.id : movie.value.id }));
         alert(`"${tv.value.name}" supprimé de la liste !`);
         fetchLists();
     } catch (error) {
@@ -208,31 +208,61 @@ onMounted(() => {
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2>TV Show Details</h2>
+            <div v-if="movie" class="flex flex-col items-center space-y-4 p-6 bg-white rounded-lg shadow">
+                <!-- Titre et genres -->
+                <div class="flex flex-wrap items-center space-x-2">
+                    <h1 class="text-2xl font-bold text-gray-800">{{ movie.title }}</h1>
+                    <span v-for="(genre, index) in movie.genres" :key="index"
+                        class="text-sm font-medium text-gray-600 bg-gray-200 rounded-full px-3 py-1">
+                        {{ genre.name }}
+                    </span>
+                </div>
+
+                <!-- Tagline -->
+                <div class="text-lg italic text-center text-gray-500">
+                    "{{ movie.tagline }}"
+                </div>
+            </div>
+            <div v-if="tv" class="flex flex-col items-center space-y-4 p-6 bg-white rounded-lg shadow">
+                <!-- Titre et genres -->
+                <div class="flex flex-wrap items-center justify-center space-x-2">
+                    <h1 class="text-2xl font-bold text-gray-800">{{ tv.name }}</h1>
+                    <span v-for="(genre, index) in tv.genres" :key="index"
+                        class="text-sm font-medium text-gray-600 bg-gray-200 rounded-full px-3 py-1">
+                        {{ genre.name }}
+                    </span>
+                </div>
+
+                <!-- Tagline -->
+                <div class="text-lg italic text-center text-gray-500">
+                    "{{ tv.tagline }}"
+                </div>
+            </div>
+
         </template>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Première colonne : Détails de la série -->
-                <div v-if="tv" class="text-gray-900 p-6 bg-white rounded-lg shadow">
-                    <h1 class="text-lg font-semibold">{{ tv.name }}</h1>
+                <div v-if="tv" class="text-gray-900 p-6 bg-white rounded-lg md:col-span-1 shadow">
                     <img v-if="tv.poster_path" :src="`https://image.tmdb.org/t/p/w500${tv.poster_path}`"
                         alt="TV Poster" />
-                    <p>{{ tv.overview }}</p>
+                    <p class="py-2">{{ tv.overview }}</p>
                     <p><strong>Première diffusion:</strong> {{ tv.first_air_date }}</p>
                     <p><strong>Nombre de saisons:</strong> {{ tv.number_of_seasons }}</p>
+                    <p><strong>Nombre d'épisodes:</strong> {{ tv.number_of_episodes }}</p>
+                    <p><strong>Statut:</strong> {{ tv.status }}</p>
                 </div>
                 <!-- Première colonne : Détails du film -->
-                <div v-if="movie" class="text-gray-900 p-6 bg-white rounded-lg shadow">
-                    <h1 class="text-lg font-semibold">{{ movie.title }}</h1>
-                    <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-                        alt="Movie Poster" />
-                    <p>{{ movie.overview }}</p>
+                <div v-if="movie" class="text-gray-900 p-6 bg-white rounded-lg md:col-span-1 shadow">
+                    <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie Poster" />
+                    <p class="py-2">{{ movie.overview }}</p>
                     <p><strong>Sortie:</strong> {{ movie.release_date }}</p>
+                    <p><strong>Durée:</strong> {{ movie.runtime }}</p>
                 </div>
 
                 <!-- Deuxième colonne : Gestion des listes -->
-                <div class="p-6 bg-white rounded-lg shadow">
+                <div class="p-6 bg-white rounded-lg shadow md:col-span-2">
                     <h3 class="text-lg font-semibold mb-4">Créer une liste</h3>
                     <input v-model="listName" type="text" placeholder="Nom de la liste"
                         class="w-full px-4 py-2 border rounded mb-2" />
@@ -246,19 +276,32 @@ onMounted(() => {
                         <ul>
                             <li v-for="(list, index) in lists" :key="index" class="flex flex-col border-b py-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="flex-1">{{ list.name }}</span>
-                                    <div class="flex items-center space-x-2">
-                                        <button v-if="isInList(list.items)" @click="removeFromList(list.id)"
-                                            class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">
-                                            🗑 Supprimer
-                                        </button>
+                                    <button @click="destroyList(list.id)"
+                                        class="px-1 py-2 mx-1 bg-red-500 text-white rounded hover:bg-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                    <button @click="openShareModal(index)"
+                                        class="px-1 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                                        </svg>
+
+                                    </button>
+                                    <span class="flex-1 px-2">{{ list.name }}</span>
+                                    <div class="flex items-center space-x-1">
                                         <button @click="addToList(list.id)"
-                                            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                                            ➕ Ajouter
+                                            class="bg-green-500 text-white px-1 py-2 rounded hover:bg-green-600">
+                                            ➕ Ajouter à cette liste
                                         </button>
-                                        <button @click="openShareModal(index)"
-                                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                            Partager la liste
+                                        <button v-if="isInList(list.items)" @click="removeFromList(list.id)"
+                                            class="bg-red-500 text-white px-1 py-2 rounded hover:bg-red-600">
+                                            🗑 Retirer de cette liste
                                         </button>
                                     </div>
                                 </div>
