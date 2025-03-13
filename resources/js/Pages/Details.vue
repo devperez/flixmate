@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import ShareListModal from '@/Components/ShareListModal.vue';
 
@@ -15,6 +15,12 @@ const activeConnections = ref([]);
 const selectedListId = ref(null);
 const showShareModal = ref(false);
 const movie = ref(null);
+const sharedContacts = ref([]);
+const currentUserId = ref(null);
+
+const sharedContactIds = computed(() => {
+    return sharedContacts.value.map(contact => contact.id);
+});
 
 //console.log(props.type);
 // Récupérer les détails de la série TV depuis TMDb
@@ -139,6 +145,7 @@ const addToList = async (listId) => {
 
 const openShareModal = (index) => {
     selectedListId.value = lists.value[index].id;
+    fetchSharedContacts(selectedListId.value);
     showShareModal.value = true;
 };
 
@@ -150,6 +157,7 @@ const closeShareModal = () => {
 const handleListShared = () => {
     fetchLists();
 };
+
 // Fonction pour partager la liste
 const shareList = async (index) => {
     const list = lists.value[index];
@@ -182,13 +190,34 @@ const isInList = (items) => {
 };
 
 const removeFromList = (listId) => {
-    console.log(movie.value.id);
+    //console.log(movie.value.id);
     try {
         axios.delete(route('delete-movie', { list: listId, movie: tv.value.id ? tv.value.id : movie.value.id }));
         alert(`"${tv.value.name}" supprimé de la liste !`);
         fetchLists();
     } catch (error) {
         console.error('Erreur lors de la suppression de la série de la liste:', error);
+    }
+};
+
+// Fonction pour récupérer les contacts avec lesquels la liste est déjà partagée
+const fetchSharedContacts = async (selectedListId) => {
+    //console.log(selectedListId);
+    try {
+        const response = await axios.get(route('lists.sharedContacts', { listId: selectedListId }));
+        sharedContacts.value = response.data.sharedContacts;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des contacts partagés:', error);
+    }
+};
+
+// Fonction pour récupérer l'ID de l'utilisateur actuel
+const fetchCurrentUserId = async () => {
+    try {
+        const response = await axios.get(route('current-user'));
+        currentUserId.value = response.data.id;
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'ID de l\'utilisateur actuel:', error);
     }
 };
 
@@ -201,6 +230,7 @@ onMounted(() => {
     }
     fetchLists();
     fetchConnections();
+    fetchCurrentUserId();
 });
 </script>
 
@@ -312,7 +342,9 @@ onMounted(() => {
             </div>
         </div>
         <!-- Utilisation du composant ShareListModal -->
-        <ShareListModal v-if="showShareModal" :listId="selectedListId" :activeConnections="activeConnections"
-            @close="closeShareModal" @shared="handleListShared" />
+        <!-- <ShareListModal v-if="showShareModal" :listId="selectedListId" :activeConnections="activeConnections"
+            @close="closeShareModal" @shared="handleListShared" /> -->
+            <ShareListModal v-if="showShareModal" :listId="selectedListId" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
+            :ownerId="selectedListId?.owner_id" :currentUserId="currentUserId" @close="closeShareModal" @shared="handleListShared" />
     </AuthenticatedLayout>
 </template>
