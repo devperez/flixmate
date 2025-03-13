@@ -38,6 +38,7 @@
         <!-- Utilisation du composant ShareListModal -->
         <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
             :ownerId="list?.owner_id" :currentUserId="currentUserId" @close="closeShareModal" @shared="handleListShared" />
+        <Chat :list-id="list?.id" />
     </AuthenticatedLayout>
 </template>
 
@@ -46,6 +47,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import ShareListModal from '@/Components/ShareListModal.vue';
 import { ref, onMounted, computed } from 'vue';
+import Chat from '@/Components/Chat.vue';
 
 const showShareModal = ref(false);
 const activeConnections = ref([]);
