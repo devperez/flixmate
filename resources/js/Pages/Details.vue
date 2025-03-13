@@ -190,10 +190,15 @@ const isInList = (items) => {
 };
 
 const removeFromList = (listId) => {
-    //console.log(movie.value.id);
+    //console.log(listId);
+    let item = tv.value;
+    if (!item) {
+        item = movie.value;
+    }
+    //console.log(item);
     try {
-        axios.delete(route('delete-movie', { list: listId, movie: tv.value.id ? tv.value.id : movie.value.id }));
-        alert(`"${tv.value.name}" supprimé de la liste !`);
+        axios.delete(route('delete-movie', { list: listId, movie: item.id }));
+        //alert(`"${item.name}" supprimé de la liste !`);
         fetchLists();
     } catch (error) {
         console.error('Erreur lors de la suppression de la série de la liste:', error);
