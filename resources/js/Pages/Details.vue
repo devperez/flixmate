@@ -226,6 +226,17 @@ const fetchCurrentUserId = async () => {
     }
 };
 
+// Fonction pour supprimer une liste
+const destroyList = async (listId) => {
+    try {
+        await axios.delete(route('lists.destroy', { id: listId }));
+        lists.value = lists.value.filter(list => list.id !== listId);
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la liste:', error);
+    }
+};
+
+
 // Charger les données au montage du composant
 onMounted(() => {
     if (props.type === 'tv') {

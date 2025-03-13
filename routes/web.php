@@ -43,6 +43,7 @@ Route::get('/lists', [ListController::class, 'index'])->name('lists.index');
 Route::post('/lists', [ListController::class, 'store'])->name('lists.store');
 Route::post('/lists/add-movie', [ListController::class, 'addMovie'])->name('lists.add_movie');
 Route::get('/lists/{id}', [ListController::class, 'show'])->name('lists.show');
+Route::delete('/lists/{id}', [ListController::class, 'destroy'])->name('lists.destroy');
 Route::get('/list/shared-contact', [ListController::class, 'sharedWithContacts'])->name('lists.sharedContacts');
 Route::delete('/delete-movie', [ListController::class, 'delete'])->name('delete-movie');
 

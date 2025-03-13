@@ -126,4 +126,11 @@ class ListController extends Controller
         $listItem->delete();
         return response()->json(['message' => 'Movie deleted']);
     }
+
+    public function destroy($id)
+    {
+        $list = MovieList::find($id);
+        $list->delete();
+        return response()->json(['message' => 'List deleted']);
+    }
 }
