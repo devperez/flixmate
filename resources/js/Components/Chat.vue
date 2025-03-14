@@ -5,8 +5,8 @@
                 <strong>{{ message.user.name }}:</strong> {{ message.message }}
             </div>
         </div>
-        <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message" />
-        <button @click="sendMessage">Send</button>
+        <textarea v-model="newMessage" @keyup.enter="sendMessage" placeholder="Écrire un message" />
+        <button class="mt-2" @click="sendMessage">Envoyer</button>
     </div>
 </template>
 
@@ -63,21 +63,27 @@ onMounted(() => {
 }
 
 .messages {
+    flex: 1;
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
 }
 
 .message {
     padding: 5px 0;
 }
 
-input {
-    width: calc(100% - 70px);
+textarea {
+    resize: none;
+    height: 60px;
     padding: 10px;
-    margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 button {

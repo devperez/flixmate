@@ -16,29 +16,31 @@
                         Partager la liste
                     </button>
                 </div>
-                <div v-if="list">
-                    <h1 class="text-2xl font-bold mb-4">{{ list.name }}</h1>
-                    <div v-if="list.items && list.items.length > 0"
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div v-for="item in list.items" :key="item.id"
-                            class="border rounded-lg shadow-md p-4 text-center">
-                            <Link :href="route('tv.details', { id: item.movie.tmdb_id, type: item.movie.metadata })">
-                                <img v-if="item.movie" :src="'https://image.tmdb.org/t/p/w500' + item.movie.poster_path"
-                                alt="Affiche du film" class="w-full h-auto rounded-lg shadow mb-4">
-                            <p class="text-lg font-semibold">{{ item.movie?.title }}</p>
-                            </Link>
+                <div v-if="list" class="flex flex-col md:flex-row gap-4">
+                    <div class="w-full md:w-3/4">
+                        <h1 class="mx-4 text-2xl font-bold mb-4">{{ list.name }}</h1>
+                        <div v-if="list.items && list.items.length > 0"
+                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div v-for="item in list.items" :key="item.id"
+                                class="border rounded-lg shadow-md p-4 text-center">
+                                <Link :href="route('tv.details', { id: item.movie.tmdb_id, type: item.movie.metadata })">
+                                    <img v-if="item.movie" :src="'https://image.tmdb.org/t/p/w500' + item.movie.poster_path"
+                                    alt="Affiche du film" class="w-full h-auto rounded-lg shadow mb-4">
+                                    <p class="text-lg font-semibold">{{ item.movie?.title }}</p>
+                                </Link>
+                            </div>
                         </div>
+                        <p v-else class="text-gray-500">Cette liste est vide.</p>
                     </div>
-                    <p v-else class="text-gray-500">Cette liste est vide.</p>
+                    <div class="py-12">
+                        <Chat class="w-full md:w-3/4" :list-id="list?.id" />
+                    </div>
                 </div>
-
-                <p v-else class="text-red-500">Chargement de la liste...</p>
             </div>
         </div>
         <!-- Utilisation du composant ShareListModal -->
         <ShareListModal v-if="showShareModal" :listId="list?.id" :activeConnections="activeConnections" :sharedContacts="sharedContactIds"
             :ownerId="list?.owner_id" :currentUserId="currentUserId" @close="closeShareModal" @shared="handleListShared" />
-        <Chat :list-id="list?.id" />
     </AuthenticatedLayout>
 </template>
 
