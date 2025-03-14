@@ -48,6 +48,7 @@ class ContactController extends Controller
             ->where('status', 'pending')
             ->with('user')
             ->get();
+        
         $activeConnections = UserConnection::where(function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })
@@ -55,11 +56,17 @@ class ContactController extends Controller
             ->with(['user', 'connectedUser'])
             ->get();
 
-            $user = User::find($userId);
+        $user = User::find($userId);
+        
+        $userPendingConnections = UserConnection::where('user_id', $userId)
+            ->where('status', 'pending')
+            ->with('connectedUser')
+            ->get();
 
         return response()->json([
             'pendingConnections' => $pendingConnections,
             'activeConnections' => $activeConnections,
+            'userPendingConnections' => $userPendingConnections,
             'user' => $user
         ]);
     }
@@ -113,5 +120,26 @@ class ContactController extends Controller
         }
 
         return response()->json(['message' => 'Liste partagée']);
+    }
+
+    public function checkConnection($id)
+    {
+        $user = Auth::user();
+        $pendingConnection = UserConnection::where('user_id', $user->id)
+            ->where('connected_user_id', $id)
+            ->where('status', ['pending'])
+            ->first();
+        $acceptedConnection = UserConnection::where('user_id', $user->id)
+            ->where('connected_user_id', $id)
+            ->where('status', ['accepted'])
+            ->first();{
+        //dd($connection);
+        if ($pendingConnection) {
+            return response()->json(['status' => 'pending', 'message' => 'Une demande est déjà en cours.']);
+        } elseif ($acceptedConnection) {
+            return response()->json(['status' => 'accepted', 'message' => 'Vous êtes déjà en contact avec cet utilisateur.']);
+        }
+        return response()->json(['status' => 'none', 'message' => 'Aucune demande en cours ou contact existant.']);
+        }
     }
 }

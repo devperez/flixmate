@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/contacts/connections', [ContactController::class, 'getConnections'])->name('contacts.connections');
     Route::post('/accept-connection', [ContactController::class, 'acceptConnection'])->name('contacts.accept');
     Route::post('/reject-connection', [ContactController::class, 'rejectConnection'])->name('contacts.reject');
+    Route::get('/contacts/check/{id}', [ContactController::class, 'checkConnection'])->name('contacts.check');
     Route::post('/share-list', [ContactController::class, 'shareList'])->name('share-list');
     
     Route::get('lists/{list}/chat', [ChatMessageController::class, 'show'])->name('lists.chat.show');

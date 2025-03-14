@@ -36,6 +36,7 @@
                         <div v-for="connection in pendingConnections" :key="connection.id" class="border p-4 mb-2">
                             <p><strong>Nom:</strong> {{ getConnectedUserName(connection) }}</p>
                             <p><strong>Email:</strong> {{ getConnectedUserEmail(connection) }}</p>
+                            <p class="text-gray-600">En attente de confirmation...</p>
                             <button @click="acceptConnection(connection.id)"
                                 class="px-4 py-2 bg-green-500 text-white rounded">
                                 Accepter
@@ -46,9 +47,17 @@
                             </button>
                         </div>
                     </div>
+                    <div v-if="userPendingConnections.length > 0">
+                        <div v-for="connection in userPendingConnections" :key="connection.id" class="border p-4 mb-2">
+                            <p><strong>Nom:</strong> {{ getConnectedUserName(connection) }}</p>
+                            <p><strong>Email:</strong> {{ getConnectedUserEmail(connection) }}</p>
+                            <p class="text-gray-600">En attente de confirmation...</p>
+                        </div>
+                    </div>
                     <div v-else>
                         <p>Aucune demande en attente.</p>
                     </div>
+
                 </div>
 
                 <div>
@@ -89,13 +98,15 @@ const user = ref(null);
 const searchedUser = ref(null);
 const pendingConnections = ref([]);
 const activeConnections = ref([]);
+const userPendingConnections = ref([]);
 
 const fetchConnections = async () => {
     try {
         const response = await axios.get(route('contacts.connections'));
-        //console.log('Réponse des connexions:', response.data);
+        console.log('Réponse des connexions:', response.data);
         pendingConnections.value = response.data.pendingConnections;
         activeConnections.value = response.data.activeConnections;
+        userPendingConnections.value = response.data.userPendingConnections;
         user.value = response.data.user;
     } catch (error) {
         console.error('Erreur lors de la récupération des connexions:', error);
@@ -121,11 +132,33 @@ const searchEmails = debounce(async () => {
 const addToContacts = async () => {
     if (searchedUser.value && searchedUser.value.id) {
         try {
+            const isPendingOrAccepted = await checkIfRequestIsPending(searchedUser.value.id);
+console.log('isPending:', isPendingOrAccepted);
+            if (isPendingOrAccepted) {
+                alert('Une demande est déjà en cours pour cet utilisateur ou vous êtes déjà en contact avec lui.');
+                return;
+            }
+
             await axios.post(route('contacts.add', { id: searchedUser.value.id }));
-            alert('Utilisateur ajouté à vos contacts!');
+            //alert('Utilisateur ajouté à vos contacts!');
+            fetchConnections();
         } catch (error) {
             console.error('Erreur lors de l\'ajout de l\'utilisateur:', error);
         }
+    }
+};
+
+const checkIfRequestIsPending = async (userId) => {
+    try {
+        const response = await axios.get(route('contacts.check', { id: userId }));
+        if (response.data.status === 'pending' || response.data.status === 'accepted') {
+            //alert('Une demande est déjà en cours pour cet utilisateur ou vous êtes déjà en contact avec lui.');
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Erreur lors de la vérification du statut de la demande:', error);
+        return false;
     }
 };
 
