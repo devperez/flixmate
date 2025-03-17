@@ -30,19 +30,16 @@ function handleImageError() {
     <div class="home">
         <!-- En-tête avec Image de Fond -->
         <header class="relative bg-cover bg-center h-screen"
-            style="background-image: url('https://example.com/hero-image.jpg')">
+            style="background-image: url('/images/header.jpg');">
             <div class="absolute inset-0 bg-black opacity-50"></div>
             <div class="relative container mx-auto text-center text-white py-48">
                 <nav class="absolute top-4 right-4 flex items-center space-x-4">
                     <Link :href="route('login')" class="text-white hover:text-gray-300">
                     Connexion
                     </Link>
-                    <Link v-if="canRegister" :href="route('register')"
-                    class="text-white hover:text-gray-300">
+                    <Link v-if="canRegister" :href="route('register')" class="text-white hover:text-gray-300">
                     Inscription
                     </Link>
-                    <!-- <a href="/login" class="text-white hover:text-gray-300">Connexion</a> -->
-                    <!-- <a href="/register" class="text-white hover:text-gray-300">Inscription</a> -->
                 </nav>
                 <h1 class="text-6xl font-bold mb-4 animate-fade-in">Bienvenue sur FlixMate</h1>
                 <p class="text-2xl animate-fade-in delay-200">Gérez vos listes de films et séries, et discutez avec vos
@@ -53,6 +50,15 @@ function handleImageError() {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                     </svg>
+                </div>
+                <!-- Captures d'Écran -->
+                <div class="mt-12 flex flex-wrap justify-center gap-4 image-container">
+                    <img src="/images/dashboard.png" alt="Capture d'écran 1"
+                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+                    <img src="/images/liste.png" alt="Capture d'écran 2"
+                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+                    <img src="/images/show.png" alt="Capture d'écran 3"
+                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
                 </div>
             </div>
         </header>
@@ -79,7 +85,7 @@ function handleImageError() {
         </section>
 
         <!-- Section Témoignages -->
-        <section class="py-20 bg-white">
+        <!-- <section class="py-20 bg-white">
             <div class="container mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-12">Ce que disent nos utilisateurs</h2>
                 <div class="flex flex-wrap justify-center">
@@ -95,7 +101,7 @@ function handleImageError() {
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
 
         <!-- Appel à l'Action -->
         <section class="py-20 bg-blue-500 text-white">
@@ -103,9 +109,12 @@ function handleImageError() {
                 <h2 class="text-4xl font-bold mb-4">Prêt à commencer ?</h2>
                 <p class="mb-8 text-lg">Inscrivez-vous dès aujourd'hui et découvrez toutes les fonctionnalités de
                     FlixMate !</p>
-                <button class="bg-white text-blue-500 px-8 py-4 rounded-full font-semibold hover:bg-gray-100">
+                    <Link v-if="canRegister" :href="route('register')" class="bg-white text-blue-500 px-8 py-4 rounded-full font-semibold hover:bg-gray-100">
+                    Inscription
+                    </Link>
+                <!-- <button class="bg-white text-blue-500 px-8 py-4 rounded-full font-semibold hover:bg-gray-100">
                     S'inscrire
-                </button>
+                </button> -->
             </div>
         </section>
 
@@ -155,6 +164,19 @@ function handleImageError() {
 
 .animate-bounce {
     animation: bounce 2s infinite;
+}
+
+.image {
+    width: 50%;
+    height: auto;
+    max-width: 500px;
+}
+
+.image-container {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+    object-fit: cover;
 }
 </style>
 
