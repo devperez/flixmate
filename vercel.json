@@ -7,6 +7,26 @@
     },
     "routes": [
         {
+            "src": "/js/(.*)",
+            "dest": "/public/js/"
+        },
+        {
+            "src": "/assets/fonts/(.*)",
+            "dest": "/public/assets/fonts/"
+        },
+        {
+            "src": "/css/(.*)",
+            "dest": "/public/css/"
+        },
+        {
+            "src": "/images/(.*)",
+            "dest": "/public/images/"
+        },
+        {
+            "src": "/build/(.*)",
+            "dest": "/public/build/"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
@@ -23,6 +43,8 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie"
+        "SESSION_DRIVER": "cookie",
+        "SSR_TEMP_PATH": "/tmp/ssr",
+        "NODE_PATH" : "node"
     }
 }
