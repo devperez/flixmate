@@ -34,6 +34,7 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
+        "APP_KEY": "base64:gh9fmRJEXH3TKfjS882AXDVyUJUmBQCwJrHW6tIh80I=",
         "APP_URL": "https://flixmate-vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
