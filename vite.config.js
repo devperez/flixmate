@@ -26,4 +26,14 @@ export default defineConfig({
             'ziggy': '/resources/js/ziggy',
         },
     },
+    build: {
+        outDir: 'public/build', // Spécifiez le répertoire de sortie
+        rollupOptions: {
+            output: {
+                entryFileNames: `[name]-[hash].js`,
+                chunkFileNames: `[name]-[hash].js`,
+                assetFileNames: `[name]-[hash].[ext]`,
+            },
+        },
+    },
 });
