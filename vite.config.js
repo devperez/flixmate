@@ -27,12 +27,15 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'dist', // Spécifiez le répertoire de sortie
+        outDir: 'public/build', // Spécifiez le répertoire de sortie
         rollupOptions: {
             output: {
-                entryFileNames: `[name]-[hash].js`,
-                chunkFileNames: `[name]-[hash].js`,
-                assetFileNames: `[name]-[hash].[ext]`,
+                // entryFileNames: `[name]-[hash].js`,
+                // chunkFileNames: `[name]-[hash].js`,
+                // assetFileNames: `[name]-[hash].[ext]`,
+                entryFileNames: 'app.js', // Nom fixe pour le fichier JS principal
+                chunkFileNames: 'chunk.js', // Nom fixe pour les fichiers de chunk
+                assetFileNames: 'assets/[name].[ext]', // Nom fixe pour les autres assets (CSS, images, etc.)
             },
         },
     },
