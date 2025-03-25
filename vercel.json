@@ -8,23 +8,23 @@
     "routes": [
         {
             "src": "/js/(.*)",
-            "dest": "/public/js/"
+            "dest": "/dist/js/$1"
         },
         {
             "src": "/assets/fonts/(.*)",
-            "dest": "/public/assets/fonts/"
+            "dest": "/dist/assets/fonts/$1"
         },
         {
             "src": "/css/(.*)",
-            "dest": "/public/css/"
+            "dest": "/dist/css/$1"
         },
         {
             "src": "/images/(.*)",
-            "dest": "/public/images/"
+            "dest": "/dist/images/$1"
         },
         {
-            "src": "/build/(.*)",
-            "dest": "/dist/"
+            "src": "/manifest.json",
+            "dest": "/dist/manifest.json"
         },
         {
             "src": "/(.*)",
