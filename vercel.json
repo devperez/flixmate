@@ -24,7 +24,7 @@
         },
         {
             "src": "/build/(.*)",
-            "dest": "/public/build/"
+            "dest": "/dist/"
         },
         {
             "src": "/(.*)",
