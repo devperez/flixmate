@@ -2,13 +2,4 @@ const Ziggy = {"url":"http:\/\/localhost","port":null,"defaults":{},"routes":{"s
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
   Object.assign(Ziggy.routes, window.Ziggy.routes);
 }
-
-const ZiggyVue = {
-  install(app, options) {
-      app.config.globalProperties.$route = (name, params, absolute) => {
-          return route(name, params, absolute, Ziggy);
-      };
-  }
-};
-
-export { Ziggy, ZiggyVue };
+export { Ziggy };
