@@ -1,39 +1,22 @@
 {
     "version": 2,
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.7.2"
-        }
-    },
+    "builds": [
+        {"src": "package.json", "use": "@vercel/node"},
+        {"src": "composer.json", "use": "@vercel/php"},
+        {"src": "api/index.php", "use": "vercel-php@0.7.2"}
+    ],
     "routes": [
-        {
-            "src": "/build/(.*)",
-            "dest": "/public/build/$1"
-        },
-        {
-            "src": "/js/(.*)",
-            "dest": "/public/js/$1"
-        },
-        {
-            "src": "/assets/fonts/(.*)",
-            "dest": "/public/assets/fonts/$1"
-        },
-        {
-            "src": "/css/(.*)",
-            "dest": "/public/css/$1"
-        },
-        {
-            "src": "/images/(.*)",
-            "dest": "/public/images/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
-        }
+        {"src": "/build/(.*)", "dest": "/public/build/$1"},
+        {"src": "/js/(.*)", "dest": "/public/js/$1"},
+        {"src": "/css/(.*)", "dest": "/public/css/$1"},
+        {"src": "/images/(.*)", "dest": "/public/images/$1"},
+        {"src": "/assets/(.*)", "dest": "/public/$1"},
+        {"src": "/storage/(.*)", "dest": "/storage/$1"},
+        {"src": "/(.*)", "dest": "/api/index.php"}
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_KEY": "base64:gh9fmRJEXH3TKfjS882AXDVyUJUmBQCwJrHW6tIh80I=",
         "APP_URL": "https://flixmates-vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
@@ -44,8 +27,6 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie",
-        "SSR_TEMP_PATH": "/tmp/ssr",
-        "NODE_PATH" : "node"
+        "SESSION_DRIVER": "cookie"
     }
 }
