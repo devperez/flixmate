@@ -1,8 +1,11 @@
 {
     "version": 2,
-    "builds": [
-        {"src": "api/index.php", "use": "vercel-php@0.6.0"}
-    ],
+    "framework": null,
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.6.0"
+        }
+    },
     "routes": [
         {"src": "/build/(.*)", "dest": "/public/build/$1"},
         {"src": "/js/(.*)", "dest": "/public/js/$1"},
@@ -18,11 +21,5 @@
         "APP_URL": "https://flixmates.vercel.app",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
-    },
-    "functions": {
-        "api/index.php": {
-            "memory": 3008,
-            "maxDuration": 300
-        }
     }
 }
