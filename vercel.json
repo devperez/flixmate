@@ -20,6 +20,8 @@
         "APP_KEY": "base64:gh9fmRJEXH3TKfjS882AXDVyUJUmBQCwJrHW6tIh80I=",
         "APP_URL": "https://flixmates.vercel.app",
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie"
+        "SESSION_DRIVER": "cookie",
+        "CACHE_DRIVER": "array",
+        "VIEW_COMPILED_PATH": "/tmp/views"
     }
 }
