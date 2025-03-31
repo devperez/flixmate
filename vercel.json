@@ -66,7 +66,7 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_KEY": "base64:gh9fmRJEXH3TKfjS882AXDVyUJUmBQCwJrHW6tIh80I=",
         "APP_URL": "https://flixmates.vercel.app",
         "LOG_CHANNEL": "stderr",
