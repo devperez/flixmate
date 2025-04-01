@@ -23,7 +23,7 @@
                             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div v-for="item in list.items" :key="item.id"
                                 class="border rounded-lg shadow-md p-4 text-center">
-                                <Link :href="route('tv.details', { id: item.movie.tmdb_id, type: item.movie.metadata })">
+                                <Link :href="route('tv.details', { id: item.movie.tmdb_id, type: JSON.parse(item.movie.metadata).type })">
                                     <img v-if="item.movie" :src="'https://image.tmdb.org/t/p/w500' + item.movie.poster_path"
                                     alt="Affiche du film" class="w-full h-auto rounded-lg shadow mb-4">
                                     <p class="text-lg font-semibold">{{ item.movie?.title }}</p>
