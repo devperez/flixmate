@@ -65,6 +65,7 @@ class ListController extends Controller
             $movie->save();
             
             $listId = $request->query('list');
+            dd($listId);
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();
             $listItem->list_id = $listId;
@@ -74,6 +75,8 @@ class ListController extends Controller
         }else{
             $movie = Movie::where('tmdb_id', $request->tv_id)->first() ?: Movie::where('tmdb_id', $request->movie_id)->first();
             $listId = $request->query('list');
+            dd($listId);
+
             // Ajouter cette nouvelle entrée à la liste
             $listItem = new MovieListItem();
             $listItem->list_id = $listId;
