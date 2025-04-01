@@ -121,7 +121,7 @@ const addToList = async (listId) => {
                 metadata: 'tv',
             });
             fetchLists();
-            alert(`"${tv.value.name}" ajouté à la liste !`);
+            //alert(`"${tv.value.name}" ajouté à la liste !`);
         } catch (error) {
             console.error('Erreur lors de l\'ajout à la liste:', error);
         }
@@ -136,7 +136,7 @@ const addToList = async (listId) => {
                 metadata: 'movie',
             });
             fetchLists();
-            alert(`"${movie.value.title}" ajouté à la liste !`);
+            //alert(`"${movie.value.title}" ajouté à la liste !`);
         } catch (error) {
             console.error('Erreur lors de l\'ajout à la liste:', error);
         }
