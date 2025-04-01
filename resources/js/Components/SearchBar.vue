@@ -31,7 +31,6 @@ export default {
                 const [moviesResponse, tvResponse] = await Promise.all([
                     fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`, {
                         method: "GET",
-                        mode: "no-cors",
                         headers: {
                             accept: "application/json",
                             Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
@@ -39,7 +38,6 @@ export default {
                     }),
                     fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(query)}`, {
                         method: "GET",
-                        mode: "no-cors",
                         headers: {
                             accept: "application/json",
                             Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
