@@ -30,12 +30,16 @@ export default {
                 // Effectuer les requêtes pour les films et les séries en parallèle
                 const [moviesResponse, tvResponse] = await Promise.all([
                     fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}`, {
+                        method: "GET",
+                        mode: "no-cors",
                         headers: {
                             accept: "application/json",
                             Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
                         },
                     }),
                     fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(query)}`, {
+                        method: "GET",
+                        mode: "no-cors",
                         headers: {
                             accept: "application/json",
                             Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
