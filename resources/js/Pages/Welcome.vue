@@ -29,7 +29,7 @@ function handleImageError() {
 <template>
     <div class="home">
         <!-- En-tête avec Image de Fond -->
-        <header class="relative bg-cover bg-center h-screen"
+        <header class="relative bg-cover bg-center"
             style="background-image: url('/images/header.jpg');">
             <div class="absolute inset-0 bg-black opacity-50"></div>
             <div class="relative container mx-auto text-center text-white py-48">
@@ -41,8 +41,8 @@ function handleImageError() {
                     Inscription
                     </Link>
                 </nav>
-                <h1 class="text-6xl font-bold mb-4 animate-fade-in">Bienvenue sur FlixMate</h1>
-                <p class="text-2xl animate-fade-in delay-200">Gérez vos listes de films et séries, et discutez avec vos
+                <h1 class="text-6xl font-bold mb-4 animate-fade-in">Bienvenue sur FlixMates</h1>
+                <p class="text-2xl animate-fade-in delay-200">Créez vos listes de films et de séries, et discutez avec vos
                     amis !</p>
                 <div class="mt-8 animate-bounce">
                     <svg class="w-12 h-12 mx-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -54,11 +54,11 @@ function handleImageError() {
                 <!-- Captures d'Écran -->
                 <div class="mt-12 flex flex-wrap justify-center gap-4 image-container">
                     <img src="/images/dashboard.png" alt="Capture d'écran 1"
-                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+                    class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
                     <img src="/images/liste.png" alt="Capture d'écran 2"
-                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+                    class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
                     <img src="/images/show.png" alt="Capture d'écran 3"
-                        class="image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
+                    class="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg image rounded-lg shadow-lg transform hover:scale-105 transition-transform">
                 </div>
             </div>
         </header>
@@ -121,7 +121,7 @@ function handleImageError() {
         <!-- Pied de Page -->
         <footer class="py-8 bg-gray-800 text-white">
             <div class="container mx-auto text-center">
-                <p>&copy; 2025 FlixMate. Tous droits réservés.</p>
+                <p>&copy; 2025 FlixMates. Tous droits réservés.</p>
             </div>
         </footer>
     </div>
