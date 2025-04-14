@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatMessage;
 use App\Models\ListShare;
+use App\Services\ChatNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +24,7 @@ class ChatMessageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ChatNotificationService $notifier)
     {
         $request->validate([
             'message' => 'required|string',
@@ -35,6 +36,8 @@ class ChatMessageController extends Controller
         $message->message = $request->message;
         $message->save();
 
+        $notifier->notifyParticipants($message);
+        
         return redirect()->back();
     }
 
